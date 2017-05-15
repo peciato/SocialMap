@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed
-                    t.setText("PRE2");
+                    t.setText("PRE5");
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
-                    t.setText("PRE3");
+                    t.setText("PRE6");
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
                 // ...
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+
     }
 
     @Override
