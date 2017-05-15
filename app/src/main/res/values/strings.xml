@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SocialMap</string>
+    <string name="facebook_app_id">453142495028829</string>
+    <string name="fb_login_protocol_scheme">fb453142495028829</string>
 </resources>
