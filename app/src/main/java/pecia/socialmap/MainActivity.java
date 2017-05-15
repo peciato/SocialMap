@@ -161,11 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void cel() {
-
-    }
-
-    public void newSignin(){}
 
 
 }
