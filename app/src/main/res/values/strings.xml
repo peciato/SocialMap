@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SocialMap</string>
+    <string name="def_web_client_id">648570473676-un1faj0mqs6585tjt321ge335mpaces7.apps.googleusercontent.com</string>
 </resources>
