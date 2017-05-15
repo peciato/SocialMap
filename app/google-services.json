@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "897467790150",
+    "firebase_url": "https://socialmap-96f20.firebaseio.com",
+    "project_id": "socialmap-96f20",
+    "storage_bucket": "socialmap-96f20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897467790150:android:599457c45c2db3d4",
+        "android_client_info": {
+          "package_name": "pecia.socialmap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897467790150-1mfv5v4a273rf4f8nami6144r2kpgk4h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pecia.socialmap",
+            "certificate_hash": "83d920f7ec0f86ca85855e144e918807230cb533"
+          }
+        },
+        {
+          "client_id": "897467790150-lt7ur9l2utbu1d8rp4fl439c9sjg6lpc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmHjmyIxC-DZ9Mv3Dizl8Xe8--TpveOPM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "897467790150-lt7ur9l2utbu1d8rp4fl439c9sjg6lpc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
