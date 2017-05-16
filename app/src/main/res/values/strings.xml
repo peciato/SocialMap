@@ -3,4 +3,5 @@
     <string name="def_web_client_id">648570473676-un1faj0mqs6585tjt321ge335mpaces7.apps.googleusercontent.com</string>
     <string name="facebook_app_id">453142495028829</string>
     <string name="fb_login_protocol_scheme">fb453142495028829</string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
 </resources>
