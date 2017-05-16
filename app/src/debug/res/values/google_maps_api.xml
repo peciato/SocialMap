@@ -1,0 +1,26 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=3A:37:02:46:DE:F8:0D:13:35:B2:B5:00:62:8A:50:03:86:C2:02:23%3Bpecia.socialmap
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    3A:37:02:46:DE:F8:0D:13:35:B2:B5:00:62:8A:50:03:86:C2:02:23
+
+    SHA-1 certificate fingerprint:
+    3A:37:02:46:DE:F8:0D:13:35:B2:B5:00:62:8A:50:03:86:C2:02:23
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+         AIzaSyBlk0ZcYDD8k1Zi8lhfADHtKhW-IBwPLf4
+    </string>
+</resources>

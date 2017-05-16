@@ -310,4 +310,9 @@ public class MainActivity extends AppCompatActivity implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    public void mapStart(View view){
+        Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+        MainActivity.this.startActivity(myIntent);
+    }
 }
