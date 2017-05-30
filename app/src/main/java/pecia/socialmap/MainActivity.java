@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStatusTextView = (TextView) findViewById(R.id.status);
+       // mStatusTextView = (TextView) findViewById(R.id.status);
 
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                appStart();
             }
 
             @Override
@@ -145,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
+                appStart();
                 break;
             // ...
         }
@@ -311,8 +314,13 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public void mapStart(View view){
+    public void mapStart(){
         Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+        MainActivity.this.startActivity(myIntent);
+    }
+
+    public void appStart(){
+        Intent myIntent = new Intent(MainActivity.this, Main2Activity.class);
         MainActivity.this.startActivity(myIntent);
     }
 }

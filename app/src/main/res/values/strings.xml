@@ -5,4 +5,7 @@
     <string name="fb_login_protocol_scheme">fb453142495028829</string>
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
