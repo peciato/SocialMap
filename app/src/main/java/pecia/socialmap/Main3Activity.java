@@ -86,6 +86,7 @@ public class Main3Activity extends AppCompatActivity
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         mapFrag = new MapFragment();
+        mapFrag.getMapAsync(this);
         transaction.add(R.id.app_bar, mapFrag);
         transaction.commit();
 
