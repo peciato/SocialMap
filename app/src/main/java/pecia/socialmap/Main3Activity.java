@@ -10,9 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -35,7 +32,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -134,8 +130,9 @@ public class Main3Activity extends AppCompatActivity
 
         if (id == R.id.nav_map_layout) {
 
-            mapFrag = new MapFragment();
-            transaction.replace(R.id.content_frame,mapFrag );
+            //mapFrag = new MapFragment();
+            Map map = new Map();
+            transaction.replace(R.id.content_frame, map);
             transaction.addToBackStack(null);
             transaction.commit();
 
