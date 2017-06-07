@@ -87,7 +87,7 @@ public class Main3Activity extends AppCompatActivity
 
         mapFrag = new MapFragment();
         mapFrag.getMapAsync(this);
-        transaction.add(R.id.app_bar, mapFrag);
+        transaction.add(R.id.content_frame, mapFrag);
         transaction.commit();
 
     }
@@ -134,15 +134,20 @@ public class Main3Activity extends AppCompatActivity
 
         if (id == R.id.nav_map_layout) {
 
+            mapFrag = new MapFragment();
+            transaction.replace(R.id.content_frame,mapFrag );
+            transaction.addToBackStack(null);
+            transaction.commit();
+
         } else if (id == R.id.nav_user_layout) {
 
             UserFragment userFragment = new UserFragment();
-            transaction.replace(R.id.app_bar,userFragment );
+            transaction.replace(R.id.content_frame,userFragment );
             transaction.addToBackStack(null);
             transaction.commit();
             //baseFragment.getView().setEnabled(false);
         } else if (id == R.id.nav_post_layout) {
-            transaction.replace(R.id.app_bar, new PostFragment());
+            transaction.replace(R.id.content_frame, new PostFragment());
             transaction.addToBackStack(null);
             transaction.commit();
             //baseFragment.getView().setEnabled(false);
