@@ -130,9 +130,9 @@ public class Main3Activity extends AppCompatActivity
 
         if (id == R.id.nav_map_layout) {
 
-            //mapFrag = new MapFragment();
-            Map map = new Map();
-            transaction.replace(R.id.content_frame, map);
+            mapFrag = new MapFragment();
+            //Map map = new Map();
+            transaction.replace(R.id.content_frame, mapFrag);
             transaction.addToBackStack(null);
             transaction.commit();
 
