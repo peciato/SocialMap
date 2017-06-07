@@ -314,13 +314,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public void mapStart(){
-        Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
-        MainActivity.this.startActivity(myIntent);
-    }
 
     public void appStart(){
-        Intent myIntent = new Intent(MainActivity.this, Main2Activity.class);
+        Intent myIntent = new Intent(MainActivity.this, Main3Activity.class);
         MainActivity.this.startActivity(myIntent);
     }
 }
