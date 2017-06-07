@@ -33,6 +33,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -45,13 +46,14 @@ public class Main3Activity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-        private GoogleMap mMap;
+    private GoogleMap mMap;
 
-        SupportMapFragment mapFrag;
-        LocationRequest mLocationRequest;
-        GoogleApiClient mGoogleApiClient;
-        Location mLastLocation;
-        Marker mCurrLocationMarker;
+    //SupportMapFragment mapFrag;
+    MapFragment mapFrag;
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    Marker mCurrLocationMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +77,18 @@ public class Main3Activity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        //aggiungo mapfragment
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        mapFrag = new MapFragment();
+        transaction.add(R.id.app_bar, mapFrag);
+        transaction.commit();
+
     }
 
     @Override
@@ -121,20 +129,22 @@ public class Main3Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        Fragment baseFragment = getFragmentManager().findFragmentById(R.id.content_frame);
+        //Fragment baseFragment = getFragmentManager().findFragmentById(R.id.content_frame);
 
         if (id == R.id.nav_map_layout) {
 
         } else if (id == R.id.nav_user_layout) {
-            transaction.replace(R.id.content_frame, new UserFragment());
+
+            UserFragment userFragment = new UserFragment();
+            transaction.replace(R.id.app_bar,userFragment );
             transaction.addToBackStack(null);
             transaction.commit();
-            baseFragment.getView().setEnabled(false);
+            //baseFragment.getView().setEnabled(false);
         } else if (id == R.id.nav_post_layout) {
-            transaction.replace(R.id.content_frame, new PostFragment());
+            transaction.replace(R.id.app_bar, new PostFragment());
             transaction.addToBackStack(null);
             transaction.commit();
-            baseFragment.getView().setEnabled(false);
+            //baseFragment.getView().setEnabled(false);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -154,7 +164,7 @@ public class Main3Activity extends AppCompatActivity
         /**LatLng sydney = new LatLng(-34, 151);
          mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
          mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-        mMap=googleMap;
+        mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //Initialize Google Play Services
@@ -169,8 +179,7 @@ public class Main3Activity extends AppCompatActivity
                 //Request Location Permission
                 checkLocationPermission();
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
@@ -206,8 +215,7 @@ public class Main3Activity extends AppCompatActivity
     }
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -222,11 +230,12 @@ public class Main3Activity extends AppCompatActivity
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
         //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
 
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -247,7 +256,7 @@ public class Main3Activity extends AppCompatActivity
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(Main3Activity.this,
                                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -258,7 +267,7 @@ public class Main3Activity extends AppCompatActivity
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -302,4 +311,5 @@ public class Main3Activity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+}
 

@@ -69,6 +69,7 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_mappe_def, container, false);
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -77,7 +78,7 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
         /**LatLng sydney = new LatLng(-34, 151);
          mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
          mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-        mMap=googleMap;
+        mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //Initialize Google Play Services
@@ -92,8 +93,7 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
                 //Request Location Permission
                 checkLocationPermission();
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
@@ -129,8 +129,7 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
     }
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -145,11 +144,12 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
         //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
 
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -170,7 +170,7 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -181,7 +181,7 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this.getActivity(),
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -226,3 +226,4 @@ public class MappeDef extends Fragment implements OnMapReadyCallback, GoogleApiC
 
     }
 
+}
