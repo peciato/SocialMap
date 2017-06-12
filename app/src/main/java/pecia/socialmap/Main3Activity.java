@@ -1,17 +1,23 @@
 package pecia.socialmap;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -50,13 +56,26 @@ public class Main3Activity extends AppCompatActivity
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    LatLng latLng;
+    LatLng currentLatLng = new LatLng(10, 10);
+    String bool;
+
+    LocationListener locationListener;
+    LocationManager locationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Bundle bundle = getIntent().getExtras();
+        bool = bundle.getString("bool");
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +97,7 @@ public class Main3Activity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //aggiungo mapfragment
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        //android.app.FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         mapFrag = new MapFragment();
@@ -86,7 +105,9 @@ public class Main3Activity extends AppCompatActivity
         transaction.add(R.id.content_frame, mapFrag);
         transaction.commit();
 
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -104,6 +125,7 @@ public class Main3Activity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main3, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -132,6 +154,7 @@ public class Main3Activity extends AppCompatActivity
 
             mapFrag = new MapFragment();
             mapFrag.getMapAsync(this);
+            //Map map = new Map();
             transaction.replace(R.id.content_frame, mapFrag);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -139,7 +162,7 @@ public class Main3Activity extends AppCompatActivity
         } else if (id == R.id.nav_user_layout) {
 
             UserFragment userFragment = new UserFragment();
-            transaction.replace(R.id.content_frame,userFragment );
+            transaction.replace(R.id.content_frame, userFragment);
             transaction.addToBackStack(null);
             transaction.commit();
             //baseFragment.getView().setEnabled(false);
@@ -187,6 +210,9 @@ public class Main3Activity extends AppCompatActivity
             mMap.setMyLocationEnabled(true);
         }
 
+        if(bool.equals("1")) {
+            putNewMarker();
+        }
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -225,12 +251,14 @@ public class Main3Activity extends AppCompatActivity
         }
 
         //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+        currentLatLng = latLng;
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
@@ -314,5 +342,32 @@ public class Main3Activity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    public void newMarker(View view){
+        /** mMap.addMarker(new MarkerOptions()
+         .position(latLng)
+         .title("Hello world"));**/
+
+        Intent myIntent = new Intent(this, SetMarker.class);
+        ((MyApplication) getApplication()).setLatLng(currentLatLng);
+        startActivity(myIntent);
+
+
+    }
+
+    public void putNewMarker(){
+        LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
+        mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Hello world"));
+    }
+
+
+
+
+
+
+
+
 }
 

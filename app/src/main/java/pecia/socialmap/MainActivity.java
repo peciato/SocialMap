@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.sign_in_button:
                 signIn();
                 appStart();
+                this.finish();
                 break;
             // ...
         }
@@ -318,7 +319,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public void appStart(){
+        String prova = "2";
         Intent myIntent = new Intent(MainActivity.this, Main3Activity.class);
+        myIntent.putExtra("bool", prova);
         MainActivity.this.startActivity(myIntent);
     }
 }
