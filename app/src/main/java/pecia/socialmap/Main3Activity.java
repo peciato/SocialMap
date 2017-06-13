@@ -390,6 +390,7 @@ public class Main3Activity extends AppCompatActivity
         /** mMap.addMarker(new MarkerOptions()
          .position(latLng)
          .title("Hello world"));**/
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
         Intent myIntent = new Intent(this, SetMarker.class);
 
