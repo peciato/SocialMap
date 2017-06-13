@@ -1,12 +1,17 @@
 package pecia.socialmap;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+
+
+
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,7 +36,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,8 +49,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class Main3Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
 
@@ -60,8 +63,10 @@ public class Main3Activity extends AppCompatActivity
     LatLng currentLatLng = new LatLng(10, 10);
     String bool;
 
-    LocationListener locationListener;
-    LocationManager locationManager;
+    public static LocationListener locationListener;
+    public static LocationManager locationManager;
+
+    public static Activity delete;
 
 
     @Override
@@ -72,9 +77,10 @@ public class Main3Activity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        delete = this;
+
         Bundle bundle = getIntent().getExtras();
         bool = bundle.getString("bool");
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -104,6 +110,43 @@ public class Main3Activity extends AppCompatActivity
         mapFrag.getMapAsync(this);
         transaction.add(R.id.content_frame, mapFrag);
         transaction.commit();
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d("ciao1", "porco zeus");
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                ((MyApplication) getApplication()).setLatLng(latLng);
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
 
 
     }
@@ -243,7 +286,7 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
-    @Override
+    /**@Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
@@ -263,7 +306,7 @@ public class Main3Activity extends AppCompatActivity
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
 
-    }
+    }**/
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -347,9 +390,9 @@ public class Main3Activity extends AppCompatActivity
         /** mMap.addMarker(new MarkerOptions()
          .position(latLng)
          .title("Hello world"));**/
-
+        locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
         Intent myIntent = new Intent(this, SetMarker.class);
-        ((MyApplication) getApplication()).setLatLng(currentLatLng);
+
         startActivity(myIntent);
 
 

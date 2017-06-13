@@ -39,6 +39,11 @@ public class SetMarker extends Activity {
 
         ((MyApplication) this.getApplication()).putValue(pin);
 
+
+        Main3Activity.locationManager.removeUpdates(Main3Activity.locationListener);
+
+        Main3Activity.delete.finish();
+
         Intent intent = new Intent(this, Main3Activity.class);
         intent.putExtra("bool", prova);
         startActivity(intent);
