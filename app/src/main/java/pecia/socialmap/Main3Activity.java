@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 
 
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,7 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -38,14 +36,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class Main3Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -53,31 +49,25 @@ public class Main3Activity extends AppCompatActivity
 
     private GoogleMap mMap;
 
-    //SupportMapFragment mapFrag;
     MapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
     LatLng latLng;
-    LatLng currentLatLng = new LatLng(10, 10);
     String bool;
-
+    public static Activity delete;
     public static LocationListener locationListener;
     public static LocationManager locationManager;
-
-    public static Activity delete;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        delete = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        delete = this;
 
         Bundle bundle = getIntent().getExtras();
         bool = bundle.getString("bool");
@@ -103,7 +93,6 @@ public class Main3Activity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //aggiungo mapfragment
-        //android.app.FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         mapFrag = new MapFragment();
@@ -115,7 +104,7 @@ public class Main3Activity extends AppCompatActivity
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Log.d("ciao1", "porco zeus");
+
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) getApplication()).setLatLng(latLng);
 
@@ -191,13 +180,11 @@ public class Main3Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        //Fragment baseFragment = getFragmentManager().findFragmentById(R.id.content_frame);
 
         if (id == R.id.nav_map_layout) {
 
             mapFrag = new MapFragment();
             mapFrag.getMapAsync(this);
-            //Map map = new Map();
             transaction.replace(R.id.content_frame, mapFrag);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -208,12 +195,10 @@ public class Main3Activity extends AppCompatActivity
             transaction.replace(R.id.content_frame, userFragment);
             transaction.addToBackStack(null);
             transaction.commit();
-            //baseFragment.getView().setEnabled(false);
         } else if (id == R.id.nav_post_layout) {
             transaction.replace(R.id.content_frame, new PostFragment());
             transaction.addToBackStack(null);
             transaction.commit();
-            //baseFragment.getView().setEnabled(false);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -228,19 +213,12 @@ public class Main3Activity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        /**LatLng sydney = new LatLng(-34, 151);
-         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-        mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
@@ -253,7 +231,7 @@ public class Main3Activity extends AppCompatActivity
             mMap.setMyLocationEnabled(true);
         }
 
-        if(bool.equals("1")) {
+        if (bool.equals("1")) {
             putNewMarker();
         }
     }
@@ -274,9 +252,7 @@ public class Main3Activity extends AppCompatActivity
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
     }
@@ -286,27 +262,6 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
-    /**@Override
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-
-        //Place current location marker
-        latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-        currentLatLng = latLng;
-
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
-
-    }**/
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -314,7 +269,7 @@ public class Main3Activity extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
+
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)) {
 
@@ -338,7 +293,6 @@ public class Main3Activity extends AppCompatActivity
 
 
             } else {
-                // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
@@ -368,16 +322,10 @@ public class Main3Activity extends AppCompatActivity
                     }
 
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -386,12 +334,10 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
-    public void newMarker(View view){
-        /** mMap.addMarker(new MarkerOptions()
-         .position(latLng)
-         .title("Hello world"));**/
+    public void newMarker(View view) {
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
         Intent myIntent = new Intent(this, SetMarker.class);
 
         startActivity(myIntent);
@@ -399,18 +345,14 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
-    public void putNewMarker(){
+    public void putNewMarker() {
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
+
+
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title("Hello world"));
     }
-
-
-
-
-
-
 
 
 }

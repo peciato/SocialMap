@@ -10,7 +10,6 @@ import android.widget.EditText;
 
 public class SetMarker extends Activity {
 
-    String prova = "1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +40,10 @@ public class SetMarker extends Activity {
 
 
         Main3Activity.locationManager.removeUpdates(Main3Activity.locationListener);
-
         Main3Activity.delete.finish();
 
         Intent intent = new Intent(this, Main3Activity.class);
-        intent.putExtra("bool", prova);
+        intent.putExtra("bool", "1");
         startActivity(intent);
 
         this.finish();
