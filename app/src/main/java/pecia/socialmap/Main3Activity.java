@@ -13,14 +13,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,12 +38,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 
 public class Main3Activity extends AppCompatActivity
@@ -54,11 +57,11 @@ public class Main3Activity extends AppCompatActivity
 
     private GoogleMap mMap;
 
+    ArrayList<MyMarker> arrayMarker;
     MapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     LatLng latLng;
-    String bool;
     public static Activity delete;
     public static LocationListener locationListener;
     public static LocationManager locationManager;
@@ -69,15 +72,11 @@ public class Main3Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         delete = this;
+        arrayMarker = new ArrayList<MyMarker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        Bundle bundle = getIntent().getExtras();
-        bool = bundle.getString("bool");
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -133,13 +132,7 @@ public class Main3Activity extends AppCompatActivity
         };
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
 
@@ -237,27 +230,21 @@ public class Main3Activity extends AppCompatActivity
             mMap.setMyLocationEnabled(true);
         }
 
-        if (bool.equals("1")) {
-            putNewMarker();
-        }
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
 
-                //
-                // NewPost newPost = dataSnapshot.getValue(NewPost.class);
-
-                Log.e("Count ", "" + dataSnapshot.getChildrenCount());
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     NewPost newPost = postSnapshot.getValue(NewPost.class);
-                    Log.e(newPost.titolo, new LatLng(newPost.lat, newPost.longi).toString());
                     if (newPost != null) {
 
-                        mMap.addMarker(new MarkerOptions()
+                        Marker marker = mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(newPost.lat, newPost.longi))
                                 .title(newPost.titolo));
+
+                        arrayMarker.add(new MyMarker(marker,newPost.key));
+
                     }
                 }
 
@@ -272,7 +259,61 @@ public class Main3Activity extends AppCompatActivity
         };
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
-        mDatabase.addValueEventListener(postListener);
+        mDatabase.addListenerForSingleValueEvent(postListener);
+
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+
+
+            @Override
+            public void onChildAdded(DataSnapshot snapshot, String previousChildName) {
+
+                NewPost newPost = snapshot.getValue(NewPost.class);
+                if (newPost != null) {
+
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(newPost.lat, newPost.longi))
+                            .title(newPost.titolo));
+
+                    arrayMarker.add(new MyMarker(marker,newPost.key));
+
+                }
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot snapshot) {
+
+                NewPost newPost = snapshot.getValue(NewPost.class);
+                if (newPost != null) {
+
+                    int index = arrayMarker.indexOf(new MyMarker(newPost.key));
+                    Marker m =  arrayMarker.get(index).getMarker();
+                    m.remove();
+                }
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+        };
+
+        mDatabase.addChildEventListener(childEventListener);
+
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -368,11 +409,13 @@ public class Main3Activity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    private void onChildAdded(DataSnapshot snapshot, String previousChildName) {
 
     }
 
+
+    //Apre la activity che mette il nuovo post
     public void newMarker(View view) {
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -383,36 +426,16 @@ public class Main3Activity extends AppCompatActivity
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
         Intent myIntent = new Intent(this, SetMarker.class);
-
         startActivity(myIntent);
 
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
-    //Aggiunge Marker
-    public void putNewMarker() {
-        LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
-        //Prende post passato nell'intent
-        NewPost newPost = (NewPost) getIntent().getSerializableExtra("Post");
-        newPost.lat = latLng.latitude;
-        newPost.longi = latLng.longitude;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
-
-        writeNewPost(newPost);
-        /*mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title(newPost.titolo));*/
-    }
-
-    private void writeNewPost(NewPost newPost) {
-        mDatabase.setValue(newPost);
-    }
-
-    private void PutMarkerZone() {
-        DatabaseReference ref2 = mDatabase.child("posts");
-
-
-    }
 
 }
 

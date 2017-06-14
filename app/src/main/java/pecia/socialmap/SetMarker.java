@@ -9,6 +9,10 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class SetMarker extends Activity {
 
 
@@ -28,6 +32,8 @@ public class SetMarker extends Activity {
     }
 
     public void submit(View view){
+
+        //Intserimento testo e controllo
         EditText ti = (EditText) findViewById(R.id.editText3);
         EditText pos = (EditText) findViewById(R.id.editText4);
 
@@ -44,16 +50,14 @@ public class SetMarker extends Activity {
             return;
         }
 
-        NewPost newPost = new NewPost(titolo,post,"UTENTE!");
+        //Inserimento post online
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
+        NewPost newPost = new NewPost(titolo,post,"UTENTE!",mDatabase.getKey());
+        LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
+        newPost.lat = latLng.latitude;
+        newPost.longi = latLng.longitude;
+        mDatabase.setValue(newPost);
 
-
-        Main3Activity.locationManager.removeUpdates(Main3Activity.locationListener);
-        Main3Activity.delete.finish();
-
-        Intent intent = new Intent(this, Main3Activity.class);
-        intent.putExtra("bool", "1");
-        intent.putExtra("Post",newPost);
-        startActivity(intent);
 
         this.finish();
     }
