@@ -1,9 +1,8 @@
 package pecia.socialmap;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,7 +19,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -41,6 +39,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class Main3Activity extends AppCompatActivity
@@ -57,6 +57,8 @@ public class Main3Activity extends AppCompatActivity
     public static Activity delete;
     public static LocationListener locationListener;
     public static LocationManager locationManager;
+    private DatabaseReference mDatabase;
+
 
 
     @Override
@@ -336,6 +338,11 @@ public class Main3Activity extends AppCompatActivity
 
     public void newMarker(View view) {
 
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
         Intent myIntent = new Intent(this, SetMarker.class);
@@ -345,15 +352,30 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
+    //Aggiunge Marker
     public void putNewMarker() {
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
+        //Prende post passato nell'intent
+        NewPost newPost = (NewPost) getIntent().getSerializableExtra("Post");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
 
-
+        writeNewPost(newPost);
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title("Hello world"));
+                .title(newPost.titolo));
+
+
     }
 
+    private void writeNewPost(NewPost newPost) {
+        mDatabase.setValue(newPost);
+    }
+
+    private void PutMarkerZone() {
+        DatabaseReference ref2 = mDatabase.child("posts");
+
+
+    }
 
 }
 
