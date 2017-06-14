@@ -13,8 +13,8 @@ public class NewPost implements Serializable {
     public String titolo;
     public String messaggio;
     public String utente;
-    public LatLng latLng;
-
+    public double lat;
+    public double longi;
 
     public NewPost() { // construttore di default richiesto da Firebase
     }
@@ -24,7 +24,7 @@ public class NewPost implements Serializable {
         this.titolo = titolo;
         this.messaggio = post;
         this.utente = utente;
-        latLng = null;
+
     }
 
 

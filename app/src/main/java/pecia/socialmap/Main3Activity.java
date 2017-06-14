@@ -13,12 +13,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -39,8 +41,11 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class Main3Activity extends AppCompatActivity
@@ -58,7 +63,6 @@ public class Main3Activity extends AppCompatActivity
     public static LocationListener locationListener;
     public static LocationManager locationManager;
     private DatabaseReference mDatabase;
-
 
 
     @Override
@@ -236,6 +240,39 @@ public class Main3Activity extends AppCompatActivity
         if (bool.equals("1")) {
             putNewMarker();
         }
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+
+                //
+                // NewPost newPost = dataSnapshot.getValue(NewPost.class);
+
+                Log.e("Count ", "" + dataSnapshot.getChildrenCount());
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    NewPost newPost = postSnapshot.getValue(NewPost.class);
+                    Log.e(newPost.titolo, new LatLng(newPost.lat, newPost.longi).toString());
+                    if (newPost != null) {
+
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(newPost.lat, newPost.longi))
+                                .title(newPost.titolo));
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a messag
+                // ...
+            }
+        };
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
+        mDatabase.addValueEventListener(postListener);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -357,14 +394,14 @@ public class Main3Activity extends AppCompatActivity
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
         //Prende post passato nell'intent
         NewPost newPost = (NewPost) getIntent().getSerializableExtra("Post");
+        newPost.lat = latLng.latitude;
+        newPost.longi = latLng.longitude;
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
 
         writeNewPost(newPost);
-        mMap.addMarker(new MarkerOptions()
+        /*mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title(newPost.titolo));
-
-
+                .title(newPost.titolo));*/
     }
 
     private void writeNewPost(NewPost newPost) {
