@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -214,6 +216,10 @@ public class Main3Activity extends AppCompatActivity
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        //Listener per quando un marker è cliccato
+        mMap.setOnInfoWindowClickListener(getInfoWindowClickListener());
+
+
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -241,7 +247,8 @@ public class Main3Activity extends AppCompatActivity
 
                         Marker marker = mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(newPost.lat, newPost.longi))
-                                .title(newPost.titolo));
+                                .title(newPost.titolo)
+                                .snippet(newPost.messaggio));
 
                         arrayMarker.add(new MyMarker(marker,newPost.key));
 
@@ -273,7 +280,8 @@ public class Main3Activity extends AppCompatActivity
 
                     Marker marker = mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(newPost.lat, newPost.longi))
-                            .title(newPost.titolo));
+                            .title(newPost.titolo)
+                            .snippet(newPost.messaggio));
 
                     arrayMarker.add(new MyMarker(marker,newPost.key));
 
@@ -436,6 +444,27 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
+    public GoogleMap.OnInfoWindowClickListener getInfoWindowClickListener()
+    {
+        return new GoogleMap.OnInfoWindowClickListener()
+        {
+            @Override
+            public void onInfoWindowClick(Marker marker)
+            {
+                sendMess(marker);
+            }
+        };
+    }
+
+
+    private void sendMess(Marker marker) {
+
+        Intent intent = new Intent(this, Insert_Messagge.class);
+        MyMarker myMarker = new MyMarker(marker);
+        String keyPost = myMarker.findKeyMarker(arrayMarker);
+        intent.putExtra("keyPost", keyPost);
+        startActivity(intent);
+    }
 
 }
 

@@ -319,9 +319,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public void appStart(){
-        String prova = "2";
         Intent myIntent = new Intent(MainActivity.this, Main3Activity.class);
-        myIntent.putExtra("bool", prova);
         MainActivity.this.startActivity(myIntent);
     }
 }

@@ -51,7 +51,7 @@ public class SetMarker extends Activity {
         }
 
         //Inserimento post online
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push().child("newPost");
         NewPost newPost = new NewPost(titolo,post,"UTENTE!",mDatabase.getKey());
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
         newPost.lat = latLng.latitude;
