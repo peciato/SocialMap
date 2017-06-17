@@ -128,18 +128,18 @@ public class MainActivity extends AppCompatActivity implements
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed
-                    t.setText("PRE5");
+                    //t.setText("PRE5");
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
-                    t.setText("PRE6");
+                    //t.setText("PRE6");
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
                 // ...
             }
         };
         t = (TextView) findViewById(R.id.text3);
-        t.setText("PRE");
+        ///t.setText("PRE");
 
 
     }
@@ -148,9 +148,13 @@ public class MainActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
+
                 signIn();
                 appStart();
                 this.finish();
+
+
+
                 break;
             // ...
         }
@@ -182,10 +186,13 @@ public class MainActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+
+
             //updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             //updateUI(false);
+
         }
     }
 
@@ -305,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements
                             // If sign in fails, display a message to the user.
                             t.setText("FAIL");
                             //updateUI(null);
+
                         }
 
                         // ...

@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class MyApplication extends Application {
 
     private LatLng latLng;
+    private String user;
 
     public void setLatLng( LatLng position){
         this.latLng = position;
@@ -21,6 +22,7 @@ public class MyApplication extends Application {
     public LatLng getLatLng(){
         return this.latLng;
     }
+
 
 
 
