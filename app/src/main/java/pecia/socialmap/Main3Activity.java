@@ -41,6 +41,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -141,7 +142,7 @@ public class Main3Activity extends AppCompatActivity
             mMap.setMyLocationEnabled(true);
         }
 
-
+        Zoom();
         //Gestisce posizionamento Marker
         posMarker();
 
@@ -167,6 +168,39 @@ public class Main3Activity extends AppCompatActivity
         startActivity(intent);
     }
 
+
+    //primo Zoom
+    private void Zoom() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latilong, 15));
+                locationManager.removeUpdates(this);
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+
+
+    }
     //Posiziona marker
     private void posMarker() {
 
@@ -175,8 +209,10 @@ public class Main3Activity extends AppCompatActivity
             @Override
             public void onLocationChanged(Location location) {
 
+
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) getApplication()).setLatLng(latLng);
+
 
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
                 GeoFire geoFire = new GeoFire(ref);
@@ -293,9 +329,6 @@ public class Main3Activity extends AppCompatActivity
 
 
     }
-
-
-
 
 
 
