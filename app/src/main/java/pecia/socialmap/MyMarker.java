@@ -53,7 +53,7 @@ public class MyMarker  {
     }
 
     //serve per trovare la chiave di un marker quando lo seleziono nella mappa, per poter spedire il messaggio nel post giusto
-    public String findKeyMarker(ArrayList<MyMarker> markers) {
+    public String findIdMarker(ArrayList<MyMarker> markers) {
         int i=0;
         boolean trovato = false;
         String id = null;
@@ -61,8 +61,10 @@ public class MyMarker  {
         while(i<markers.size() &&  !trovato) {
             trovato = markers.get(i).marker.getId().equals(this.getMarker().getId());
             if(trovato) id = markers.get(i).getKey();
+            i++;
         }
 
         return id;
     }
+
 }

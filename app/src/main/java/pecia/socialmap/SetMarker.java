@@ -9,6 +9,8 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -51,12 +53,19 @@ public class SetMarker extends Activity {
         }
 
         //Inserimento post online
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
+        GeoFire geoFire = new GeoFire(ref);
+
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
         NewPost newPost = new NewPost(titolo,post,"UTENTE!",mDatabase.getKey());
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
         mDatabase.setValue(newPost);
+
+
+        geoFire.setLocation(newPost.key , new GeoLocation(newPost.lat,newPost.longi) );
 
 
         this.finish();

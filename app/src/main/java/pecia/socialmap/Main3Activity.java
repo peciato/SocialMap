@@ -13,7 +13,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +33,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -41,7 +47,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +54,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -59,21 +63,20 @@ public class Main3Activity extends AppCompatActivity
 
     private GoogleMap mMap;
 
-    ArrayList<MyMarker> arrayMarker;
-    MapFragment mapFrag;
+    private ArrayList<MyMarker> arrayMarker;
+    private MapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     LatLng latLng;
-    public static Activity delete;
     public static LocationListener locationListener;
     public static LocationManager locationManager;
     private DatabaseReference mDatabase;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        delete = this;
         arrayMarker = new ArrayList<MyMarker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
@@ -101,11 +104,71 @@ public class Main3Activity extends AppCompatActivity
 
         //aggiungo mapfragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
         mapFrag = new MapFragment();
         mapFrag.getMapAsync(this);
         transaction.add(R.id.content_frame, mapFrag);
         transaction.commit();
+
+    }
+
+
+
+    //FUNZIONI PERSONALIZZATE
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        //Listener per quando un marker è cliccato
+        mMap.setOnInfoWindowClickListener(getInfoWindowClickListener());
+
+
+        //Initialize Google Play Services
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                //Location Permission already granted
+                buildGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
+            } else {
+                //Request Location Permission
+                checkLocationPermission();
+            }
+        } else {
+            buildGoogleApiClient();
+            mMap.setMyLocationEnabled(true);
+        }
+
+
+        //Gestisce posizionamento Marker
+        posMarker();
+
+
+
+    }
+
+    //Apre la activity che mette il nuovo post
+    public void newMarker(View view) {
+
+        Intent myIntent = new Intent(this, SetMarker.class);
+        startActivity(myIntent);
+
+    }
+
+    //Apre activity per mandare messaggio
+    private void sendMess(Marker marker) {
+
+        Intent intent = new Intent(this, Insert_Messagge.class);
+        MyMarker myMarker = new MyMarker(marker);
+        String keyPost = myMarker.findIdMarker(arrayMarker);
+        intent.putExtra("keyPost", keyPost);
+        startActivity(intent);
+    }
+
+    //Posiziona marker
+    private void posMarker() {
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -114,6 +177,90 @@ public class Main3Activity extends AppCompatActivity
 
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) getApplication()).setLatLng(latLng);
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
+                GeoFire geoFire = new GeoFire(ref);
+
+                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  0.6);
+                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                    @Override
+                    public void onKeyEntered(final String key, GeoLocation location) {
+
+                        //se gia c'è questo marker esce
+                        if (arrayMarker.indexOf(new MyMarker(key)) != -1 ) return;
+
+                        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
+                        mDatabase.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                NewPost newPost = dataSnapshot.getValue(NewPost.class);
+                                if (newPost != null) {
+                                    //altrimenti lo aggiunge
+                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(newPost.lat, newPost.longi))
+                                            .title(newPost.titolo)
+                                            .snippet(newPost.messaggio));
+
+                                    arrayMarker.add(new MyMarker(marker, newPost.key));
+
+                                    //rimuove listener
+                                    mDatabase.removeEventListener(this);
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onKeyExited(String key) {
+
+                        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
+                        mDatabase.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                NewPost newPost = dataSnapshot.getValue(NewPost.class);
+                                if (newPost != null) {
+
+                                    int index = arrayMarker.indexOf(new MyMarker(newPost.key));
+                                    Marker m =  arrayMarker.get(index).getMarker();
+                                    m.remove();
+
+                                    //rimuove listener
+                                    mDatabase.removeEventListener(this);
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                        System.out.println(String.format("Key %s is no longer in the search area", key));
+                    }
+
+                    @Override
+                    public void onKeyMoved(String key, GeoLocation location) {
+                        System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+                    }
+
+                    @Override
+                    public void onGeoQueryReady() {
+                        System.out.println("All initial data has been loaded and events have been fired!");
+                    }
+
+                    @Override
+                    public void onGeoQueryError(DatabaseError error) {
+                        System.err.println("There was an error with this query: " + error);
+                    }
+                });
 
             }
 
@@ -133,15 +280,26 @@ public class Main3Activity extends AppCompatActivity
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
+
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+
+
 
 
     }
 
 
+
+
+
+
+    //FUNZIONI DI SISTEMA
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -211,118 +369,6 @@ public class Main3Activity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        //Listener per quando un marker è cliccato
-        mMap.setOnInfoWindowClickListener(getInfoWindowClickListener());
-
-
-        //Initialize Google Play Services
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //Location Permission already granted
-                buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
-            } else {
-                //Request Location Permission
-                checkLocationPermission();
-            }
-        } else {
-            buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
-        }
-
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    NewPost newPost = postSnapshot.getValue(NewPost.class);
-                    if (newPost != null) {
-
-                        Marker marker = mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(newPost.lat, newPost.longi))
-                                .title(newPost.titolo)
-                                .snippet(newPost.messaggio));
-
-                        arrayMarker.add(new MyMarker(marker,newPost.key));
-
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a messag
-                // ...
-            }
-        };
-
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
-        mDatabase.addListenerForSingleValueEvent(postListener);
-
-
-        ChildEventListener childEventListener = new ChildEventListener() {
-
-
-            @Override
-            public void onChildAdded(DataSnapshot snapshot, String previousChildName) {
-
-                NewPost newPost = snapshot.getValue(NewPost.class);
-                if (newPost != null) {
-
-                    Marker marker = mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(newPost.lat, newPost.longi))
-                            .title(newPost.titolo)
-                            .snippet(newPost.messaggio));
-
-                    arrayMarker.add(new MyMarker(marker,newPost.key));
-
-                }
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot snapshot) {
-
-                NewPost newPost = snapshot.getValue(NewPost.class);
-                if (newPost != null) {
-
-                    int index = arrayMarker.indexOf(new MyMarker(newPost.key));
-                    Marker m =  arrayMarker.get(index).getMarker();
-                    m.remove();
-                }
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-        };
-
-        mDatabase.addChildEventListener(childEventListener);
-
-
-    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -349,9 +395,6 @@ public class Main3Activity extends AppCompatActivity
     public void onConnectionSuspended(int i) {
 
     }
-
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -418,27 +461,6 @@ public class Main3Activity extends AppCompatActivity
     }
 
 
-    private void onChildAdded(DataSnapshot snapshot, String previousChildName) {
-
-    }
-
-
-    //Apre la activity che mette il nuovo post
-    public void newMarker(View view) {
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-        Intent myIntent = new Intent(this, SetMarker.class);
-        startActivity(myIntent);
-
-    }
-
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -457,14 +479,8 @@ public class Main3Activity extends AppCompatActivity
     }
 
 
-    private void sendMess(Marker marker) {
 
-        Intent intent = new Intent(this, Insert_Messagge.class);
-        MyMarker myMarker = new MyMarker(marker);
-        String keyPost = myMarker.findKeyMarker(arrayMarker);
-        intent.putExtra("keyPost", keyPost);
-        startActivity(intent);
-    }
+
 
 }
 
