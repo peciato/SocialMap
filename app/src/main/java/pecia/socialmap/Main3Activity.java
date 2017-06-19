@@ -161,7 +161,7 @@ public class Main3Activity extends AppCompatActivity
     //Apre activity per mandare messaggio
     private void sendMess(Marker marker) {
 
-        Intent intent = new Intent(this, Insert_Messagge.class);
+        Intent intent = new Intent(this, Chat.class);
         MyMarker myMarker = new MyMarker(marker);
         String keyPost = myMarker.findIdMarker(arrayMarker);
         intent.putExtra("keyPost", keyPost);
@@ -279,22 +279,18 @@ public class Main3Activity extends AppCompatActivity
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
-                        System.out.println(String.format("Key %s is no longer in the search area", key));
                     }
 
                     @Override
                     public void onKeyMoved(String key, GeoLocation location) {
-                        System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
                     }
 
                     @Override
                     public void onGeoQueryReady() {
-                        System.out.println("All initial data has been loaded and events have been fired!");
                     }
 
                     @Override
                     public void onGeoQueryError(DatabaseError error) {
-                        System.err.println("There was an error with this query: " + error);
                     }
                 });
 

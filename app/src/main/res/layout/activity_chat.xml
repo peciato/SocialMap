@@ -14,12 +14,14 @@
         android:layout_toLeftOf="@+id/fab"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+
         >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Inserisci messaggio"
             android:id="@+id/input"/>
+
 
     </android.support.design.widget.TextInputLayout>
 
@@ -32,4 +34,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+
+    <Button
+        android:id="@+id/button10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05"
+        android:onClick="sendMessToServer"
+        android:text="Invia Messaggio" />
 </RelativeLayout>

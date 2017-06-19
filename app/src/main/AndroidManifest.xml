@@ -68,7 +68,6 @@
         <activity android:name=".SetMarker" />
         //android:theme="@android:style/Theme.Dialog"
         <activity android:name=".Chat" />
-        <activity android:name=".Insert_Messagge"></activity>
     </application>
 
 </manifest>
