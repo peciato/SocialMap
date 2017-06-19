@@ -18,6 +18,7 @@
             android:id="@+id/editText3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0.10"
             android:ems="10"
             android:hint="Title"
             android:inputType="textPersonName" />
@@ -26,19 +27,43 @@
             android:id="@+id/editText4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.62"
+            android:layout_weight="0.20"
             android:elevation="0dp"
             android:ems="10"
             android:gravity="top"
             android:hint="Content"
             android:inputType="textMultiLine" />
 
-        <Button
-            android:id="@+id/button7"
+        <ImageView
+            android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.05"
+            android:layout_weight="0.6" />
+
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.01"
+            android:onClick="takePhoto"
+            android:layout_gravity="bottom"
+            android:text="Scatta Foto" />
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.01"
             android:onClick="submit"
             android:text="Submit" />
+
+
+
+
+
+
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
