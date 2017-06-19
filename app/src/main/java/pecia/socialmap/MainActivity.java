@@ -150,8 +150,6 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.sign_in_button:
 
                 signIn();
-                appStart();
-                this.finish();
 
 
 
@@ -185,7 +183,10 @@ public class MainActivity extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            ((MyApplication) this.getApplication()).setAccount(acct);
+            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            appStart();
+            this.finish();
 
 
             //updateUI(true);
