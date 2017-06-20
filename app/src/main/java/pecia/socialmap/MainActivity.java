@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements
 
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setBackground(getDrawable(R.drawable.oval_button));
-        loginButton.setHeight(200);
+        loginButton.setBackground(getDrawable(R.drawable.com_facebook_button_login_background));
+        loginButton.setHeight(50);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements
                 // ...
             }
         };
-        t = (TextView) findViewById(R.id.text3);
+        //t = (TextView) findViewById(R.id.text3);
         ///t.setText("PRE");
 
 

@@ -1,5 +1,6 @@
 package pecia.socialmap;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class Chat extends AppCompatActivity {
+public class Chat extends Activity {
 
     public String key;
     @Override
