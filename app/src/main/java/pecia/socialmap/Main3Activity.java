@@ -58,13 +58,12 @@ import java.util.ArrayList;
 
 
 public class Main3Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;
 
-    private ArrayList<MyMarker> arrayMarker;
-    private MapFragment mapFrag;
+
+    private MyMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     LatLng latLng;
@@ -77,7 +76,6 @@ public class Main3Activity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        arrayMarker = new ArrayList<MyMarker>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -104,8 +102,8 @@ public class Main3Activity extends AppCompatActivity
 
         //aggiungo mapfragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        mapFrag = new MapFragment();
-        mapFrag.getMapAsync(this);
+        mapFrag = new MyMapFragment();
+        mapFrag.getMaps();
         transaction.add(R.id.content_frame, mapFrag);
         transaction.commit();
 
@@ -115,213 +113,11 @@ public class Main3Activity extends AppCompatActivity
 
     //FUNZIONI PERSONALIZZATE
 
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        //Listener per quando un marker è cliccato
-        mMap.setOnInfoWindowClickListener(getInfoWindowClickListener());
-
-
-        //Initialize Google Play Services
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //Location Permission already granted
-                buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
-            } else {
-                //Request Location Permission
-                checkLocationPermission();
-            }
-        } else {
-            buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
-        }
-
-        Zoom();
-        //Gestisce posizionamento Marker
-        posMarker();
-
-
-
-    }
-
     //Apre la activity che mette il nuovo post
     public void newMarker(View view) {
 
         Intent myIntent = new Intent(this, SetMarker.class);
         startActivity(myIntent);
-
-    }
-
-    //Apre activity per mandare messaggio
-    private void sendMess(Marker marker) {
-
-        Intent intent = new Intent(this, Chat.class);
-        MyMarker myMarker = new MyMarker(marker);
-        String keyPost = myMarker.findIdMarker(arrayMarker);
-        intent.putExtra("keyPost", keyPost);
-        startActivity(intent);
-    }
-
-
-    //primo Zoom
-    private void Zoom() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latilong, 15));
-                locationManager.removeUpdates(this);
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-
-
-    }
-    //Posiziona marker
-    private void posMarker() {
-
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                ((MyApplication) getApplication()).setLatLng(latLng);
-
-
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
-                GeoFire geoFire = new GeoFire(ref);
-
-                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  0.6);
-                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-                    @Override
-                    public void onKeyEntered(final String key, GeoLocation location) {
-
-                        //se gia c'è questo marker esce
-                        if (arrayMarker.indexOf(new MyMarker(key)) != -1 ) return;
-
-                        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-                        mDatabase.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                NewPost newPost = dataSnapshot.getValue(NewPost.class);
-                                if (newPost != null) {
-                                    //altrimenti lo aggiunge
-                                    Marker marker = mMap.addMarker(new MarkerOptions()
-                                            .position(new LatLng(newPost.lat, newPost.longi))
-                                            .title(newPost.titolo)
-                                            .snippet(newPost.messaggio));
-
-                                    arrayMarker.add(new MyMarker(marker, newPost.key));
-
-                                    //rimuove listener
-                                    mDatabase.removeEventListener(this);
-                                }
-
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onKeyExited(String key) {
-
-                        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-                        mDatabase.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                NewPost newPost = dataSnapshot.getValue(NewPost.class);
-                                if (newPost != null) {
-
-                                    int index = arrayMarker.indexOf(new MyMarker(newPost.key));
-                                    Marker m =  arrayMarker.get(index).getMarker();
-                                    m.remove();
-
-                                    //rimuove listener
-                                    mDatabase.removeEventListener(this);
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onKeyMoved(String key, GeoLocation location) {
-                    }
-
-                    @Override
-                    public void onGeoQueryReady() {
-                    }
-
-                    @Override
-                    public void onGeoQueryError(DatabaseError error) {
-                    }
-                });
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-
-
-
 
     }
 
@@ -370,8 +166,8 @@ public class Main3Activity extends AppCompatActivity
 
         if (id == R.id.nav_map_layout) {
 
-            mapFrag = new MapFragment();
-            mapFrag.getMapAsync(this);
+            mapFrag = new MyMapFragment();
+            mapFrag.getMaps();
             transaction.replace(R.id.content_frame, mapFrag);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -398,113 +194,10 @@ public class Main3Activity extends AppCompatActivity
     }
 
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
 
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(Main3Activity.this,
-                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        })
-                        .create()
-                        .show();
 
 
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-                        if (mGoogleApiClient == null) {
-                            buildGoogleApiClient();
-                        }
-                        mMap.setMyLocationEnabled(true);
-                    }
-
-                } else {
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-        }
-    }
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    public GoogleMap.OnInfoWindowClickListener getInfoWindowClickListener()
-    {
-        return new GoogleMap.OnInfoWindowClickListener()
-        {
-            @Override
-            public void onInfoWindowClick(Marker marker)
-            {
-                sendMess(marker);
-            }
-        };
-    }
 
 
 
