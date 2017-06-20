@@ -1,26 +1,17 @@
 package pecia.socialmap;
-
-import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 
-
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.os.Debug;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -31,30 +22,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 
 
 public class Main3Activity extends AppCompatActivity
@@ -64,13 +35,8 @@ public class Main3Activity extends AppCompatActivity
 
 
     private MyMapFragment mapFrag;
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
-    LatLng latLng;
-    public static LocationListener locationListener;
     public static LocationManager locationManager;
-    private DatabaseReference mDatabase;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
 
 
     @Override
@@ -166,22 +132,42 @@ public class Main3Activity extends AppCompatActivity
 
         if (id == R.id.nav_map_layout) {
 
-            mapFrag = new MyMapFragment();
-            mapFrag.getMaps();
+            FragmentManager mManager = this.getFragmentManager();
+            Boolean fragmentPopped = mManager.popBackStackImmediate (MyMapFragment.class.getName(), 1);
             transaction.replace(R.id.content_frame, mapFrag);
-            transaction.addToBackStack(null);
+            transaction.addToBackStack(MyMapFragment.class.getName());
             transaction.commit();
 
         } else if (id == R.id.nav_user_layout) {
 
-            UserFragment userFragment = new UserFragment();
+            UserFragment userFragment;
+
+            FragmentManager mManager = this.getFragmentManager();
+
+            Boolean fragmentPopped = mManager.popBackStackImmediate (UserFragment.class.getName(), 1);
+
+            userFragment = new UserFragment();
+
             transaction.replace(R.id.content_frame, userFragment);
-            transaction.addToBackStack(null);
+            transaction.addToBackStack(UserFragment.class.getName());
             transaction.commit();
+
         } else if (id == R.id.nav_post_layout) {
-            transaction.replace(R.id.content_frame, new PostFragment());
-            transaction.addToBackStack(null);
+
+            PostFragment postFragment;
+            FragmentManager mManager = this.getFragmentManager();
+
+            //controllo se gia c'è un user fragment aperto
+            Boolean fragmentPopped = mManager.popBackStackImmediate (PostFragment.class.getName(), 1);
+
+            Log.e("frag",fragmentPopped.toString());
+
+            postFragment = new PostFragment();
+
+            transaction.replace(R.id.content_frame, postFragment);
+            transaction.addToBackStack(PostFragment.class.getName());
             transaction.commit();
+
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
