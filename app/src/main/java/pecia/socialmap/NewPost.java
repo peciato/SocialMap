@@ -1,5 +1,8 @@
 package pecia.socialmap;
 
+import android.media.Image;
+import android.widget.ImageView;
+
 /**
  * Created by Francesco on 14/06/17.
  */
@@ -11,6 +14,7 @@ public class NewPost{
     public String utente;
     public double lat;
     public double longi;
+    public String image;
     public String key;
 
     public NewPost() { // construttore di default richiesto da Firebase

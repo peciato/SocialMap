@@ -143,6 +143,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -185,8 +188,6 @@ public class MainActivity extends AppCompatActivity implements
             ((MyApplication) this.getApplication()).setAccount(acct);
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             appStart();
-            this.finish();
-
 
             //updateUI(true);
         } else {
@@ -203,6 +204,9 @@ public class MainActivity extends AppCompatActivity implements
         mAuth.addAuthStateListener(mAuthListener);
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser!=null) {
+            appStart();
+        }
         //updateUI(currentUser);
     }
 
@@ -329,5 +333,7 @@ public class MainActivity extends AppCompatActivity implements
     public void appStart(){
         Intent myIntent = new Intent(MainActivity.this, Main3Activity.class);
         MainActivity.this.startActivity(myIntent);
+        this.finish();
+
     }
 }

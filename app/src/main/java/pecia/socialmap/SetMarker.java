@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 public class SetMarker extends Activity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    Boolean fotoPresente = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,20 @@ public class SetMarker extends Activity {
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
+
+        if(fotoPresente) {
+            ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
+            ImageView imageView = (ImageView) findViewById(R.id.photo);
+            if (imageView != null) {
+                Bitmap imageBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,bYtE);
+                byte[] byteArray = bYtE.toByteArray();
+                String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                newPost.image = encodedImage;
+            }
+        }
+
+
         mDatabase.setValue(newPost);
 
 
@@ -100,7 +116,6 @@ public class SetMarker extends Activity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-
             }
     }
 
@@ -111,6 +126,8 @@ public class SetMarker extends Activity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ImageView mImageView = (ImageView) findViewById(R.id.photo);
             mImageView.setImageBitmap(imageBitmap);
+            fotoPresente = true;
+
 
         }
     }

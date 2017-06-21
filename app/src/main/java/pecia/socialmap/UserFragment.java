@@ -55,8 +55,6 @@ public class UserFragment extends Fragment {
         personId = acct.getId();
         personPhoto = acct.getPhotoUrl().toString();
 
-        Log.d("ciao", "Name: " + personName + ", Image: " + personPhoto);
-
 
 
         Glide.with(this.getActivity()).load(personPhoto).into(imgProfilePic);

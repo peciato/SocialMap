@@ -1,10 +1,15 @@
 package pecia.socialmap;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 public class Chat extends Activity {
 
     public String key;
+    public Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +52,8 @@ public class Chat extends Activity {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         final TextView title = (TextView) findViewById(R.id.titleChat);
         final TextView description = (TextView) findViewById(R.id.descrChat);
+        final ImageView imageView  = (ImageView) findViewById(R.id.image_post);
+
 
         mDatabase.child("posts").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -53,7 +61,11 @@ public class Chat extends Activity {
                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
                 title.setText(newPost.titolo);
                 description.setText(newPost.messaggio);
-
+                if (newPost.image != null) {
+                    byte[] decodedString = Base64.decode(newPost.image, Base64.DEFAULT);
+                    bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    imageView.setImageBitmap(bitmap);
+                }
             }
 
             @Override
@@ -110,4 +122,12 @@ public class Chat extends Activity {
 
         listView.setAdapter(adapter);
     }
+
+    public void openImage(View view) {
+        Intent intent = new Intent(this,Image_Activity.class);
+        intent.putExtra("image",bitmap );
+        startActivity(intent);
+    }
+
 }
+

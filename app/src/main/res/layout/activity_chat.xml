@@ -21,20 +21,39 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:elevation="1dp"
-            android:text="ciao"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/descrChat"
+        <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:elevation="1dp"
-            android:text="Ciao come va io sto bene hfsofjun cjdujv  jrsnvov  csio snj   cnsnjs "
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:elevation="1dp">
+
+            <TextView
+                android:id="@+id/descrChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="15dp"
+                android:elevation="1dp"
+                android:layout_alignParentLeft="true"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/image_post"
+                android:onClick="openImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"/>
+
+
+
+        </RelativeLayout>
+
 
         <TextView
             android:layout_width="match_parent"
