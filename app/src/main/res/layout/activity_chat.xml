@@ -1,45 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="pecia.socialmap.Chat">
 
-
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/fab"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-
-        >
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Inserisci messaggio"
-            android:id="@+id/input"/>
-
-
-    </android.support.design.widget.TextInputLayout>
-
-    <ListView
-        android:id="@+id/list_of_messagge"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/fab"
-        android:dividerHeight="16dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="20"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button10"
+        <TextView
+            android:id="@+id/titleChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="1dp"
+            android:text="ciao"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/descrChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="1dp"
+            android:text="Ciao come va io sto bene hfsofjun cjdujv  jrsnvov  csio snj   cnsnjs "
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:elevation="1dp"
+            android:text="Comments:"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <ListView
+            android:id="@+id/list_of_messagge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/fab"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:dividerHeight="2dp"
+            android:elevation="1dp" />
+
+    </LinearLayout>
+
+
+    <include
+        layout="@layout/type_message_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.05"
-        android:onClick="sendMessToServer"
-        android:text="Invia Messaggio" />
-</RelativeLayout>
+        android:layout_weight="1"
+        android:gravity="bottom" />
+
+</LinearLayout>

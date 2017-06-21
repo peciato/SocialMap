@@ -13,8 +13,11 @@ import android.widget.Toast;
 
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class Chat extends Activity {
@@ -35,9 +38,31 @@ public class Chat extends Activity {
         } else {
             key = (String) savedInstanceState.getSerializable("keyPost");
         }
-
+        displayDescPost();
         displayChatMess();
     }
+
+    private void displayDescPost() {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        final TextView title = (TextView) findViewById(R.id.titleChat);
+        final TextView description = (TextView) findViewById(R.id.descrChat);
+
+        mDatabase.child("posts").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                NewPost newPost = dataSnapshot.getValue(NewPost.class);
+                title.setText(newPost.titolo);
+                description.setText(newPost.messaggio);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void sendMessToServer(View view) {
 
         EditText me = (EditText) findViewById(R.id.input);
