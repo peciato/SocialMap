@@ -1,6 +1,5 @@
 package pecia.socialmap;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by Pierluca on 5/31/2017.
@@ -35,7 +33,7 @@ public class UserFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.first_layout, container, false);
+        myView = inflater.inflate(R.layout.fragment_user, container, false);
         imgProfilePic = (ImageView) myView.findViewById(R.id.imageView2);
         username = (TextView) myView.findViewById(R.id.textView4);
         getInfoAccount();
