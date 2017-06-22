@@ -22,12 +22,16 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -54,6 +58,8 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     private LatLng latLng;
     GoogleApiClient mGoogleApiClient;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private BitmapDescriptor icon ;
+
 
     ArrayList<MyMarker> arrayMarker = new ArrayList<MyMarker>();
 
@@ -66,6 +72,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name);
         getMaps();
 
     }
@@ -200,7 +207,9 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                                     Marker marker = mMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(newPost.lat, newPost.longi))
                                             .title(newPost.titolo)
-                                            .snippet(newPost.messaggio));
+                                            .snippet(newPost.messaggio)
+                                            .icon(icon)
+                                    );
 
                                     arrayMarker.add(new MyMarker(marker, newPost.key));
 
