@@ -1,9 +1,9 @@
 package pecia.socialmap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by Pierluca on 5/31/2017.
@@ -19,15 +20,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class UserFragment extends Fragment {
 
-    View myView;
-    String personName;
-    String personGivenName;
-    String personFamilyName;
-    String personEmail;
-    String personId;
-    String personPhoto;
-    ImageView imgProfilePic;
-    TextView username;
+    private View myView;
+    private ImageView imgProfilePic;
+    private TextView username;
 
 
     @Nullable
@@ -36,29 +31,24 @@ public class UserFragment extends Fragment {
         myView = inflater.inflate(R.layout.fragment_user, container, false);
         imgProfilePic = (ImageView) myView.findViewById(R.id.imageView2);
         username = (TextView) myView.findViewById(R.id.textView4);
-        getInfoAccount();
 
 
         return myView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
-    public void getInfoAccount(){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this.getActivity(), Login.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Glide.with(this.getActivity()).load(user.getPhotoUrl().toString()).into(imgProfilePic);
+        username.setText(user.getDisplayName());
 
-        GoogleSignInAccount acct = ((MyApplication) this.getActivity().getApplication()).getAccount();
-
-        personName = acct.getDisplayName();
-        personGivenName = acct.getGivenName();
-        personFamilyName = acct.getFamilyName();
-        personEmail = acct.getEmail();
-        personId = acct.getId();
-        personPhoto = acct.getPhotoUrl().toString();
-
-
-
-        Glide.with(this.getActivity()).load(personPhoto).into(imgProfilePic);
-        username.setText(personName);
     }
-
 }

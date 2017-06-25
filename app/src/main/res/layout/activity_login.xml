@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/logindef"
-    tools:context="pecia.socialmap.MainActivity">
+    tools:context="pecia.socialmap.Login">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"

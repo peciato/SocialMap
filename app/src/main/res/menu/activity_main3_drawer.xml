@@ -5,27 +5,24 @@
         <item
             android:id="@+id/nav_map_layout"
             android:icon="@drawable/ic_menu_camera"
-            android:title="MAP" />
+            android:title="@string/mappe" />
         <item
             android:id="@+id/nav_user_layout"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="USER" />
+            android:title="@string/user" />
         <item
             android:id="@+id/nav_post_layout"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="POST" />
+            android:title="@string/post" />
+
     </group>
 
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_logout_layout"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="@string/logout" />
         </menu>
     </item>
 

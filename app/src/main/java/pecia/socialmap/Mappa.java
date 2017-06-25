@@ -1,5 +1,4 @@
 package pecia.socialmap;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
@@ -22,16 +21,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 
-
-public class Main3Activity extends AppCompatActivity
+public class Mappa extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private GoogleMap mMap;
+
 
 
     private MyMapFragment mapFrag;
@@ -43,7 +40,7 @@ public class Main3Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.activity_mappa);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -75,9 +72,18 @@ public class Main3Activity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this,Login.class);
+            startActivity(intent);
+            this.finish();
+        }
 
+    }
 
-    //FUNZIONI PERSONALIZZATE
+//FUNZIONI PERSONALIZZATE
 
     //Apre la activity che mette il nuovo post
     public void newMarker(View view) {
@@ -168,12 +174,13 @@ public class Main3Activity extends AppCompatActivity
             transaction.addToBackStack(PostFragment.class.getName());
             transaction.commit();
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout_layout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            finish();
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

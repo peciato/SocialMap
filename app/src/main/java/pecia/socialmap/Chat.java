@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,8 +29,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Chat extends Activity {
 
-    public String key;
-    public Bitmap bitmap;
+    private String key;
+    private Bitmap bitmap;
+    private String id;
+    private boolean actived;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +48,36 @@ public class Chat extends Activity {
         } else {
             key = (String) savedInstanceState.getSerializable("keyPost");
         }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        actived = false;
         displayDescPost();
         displayChatMess();
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
+
+         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                    String postattivo = postSnapshot.getValue(String.class);
+                    if(postattivo.equals(key)) {
+                        actived = true;
+                        break;
+                    }
+                }
+            }
+             @Override
+             public void onCancelled(DatabaseError databaseError) {
+
+             }
+         });
     }
 
     private void displayDescPost() {
@@ -84,10 +116,17 @@ public class Chat extends Activity {
             Toast.makeText(this, "Inserisci Messaggio", Toast.LENGTH_SHORT).show();
             return;
         }
-        ChatMess chatMess = new ChatMess(messaggio, "UTENTE2"); //FirebaseAuth.getInstance().getCurrentUser().toString());
+        ChatMess chatMess = new ChatMess(messaggio, FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat").push();
         mDatabase.setValue(chatMess);
+
+
+        if(!actived && id!=null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id).push();
+            mDatabase.setValue(key);
+        }
+
 
     }
 
