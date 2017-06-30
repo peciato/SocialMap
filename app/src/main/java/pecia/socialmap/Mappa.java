@@ -48,8 +48,7 @@ public class Mappa extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                newMarker();
             }
         });
 
@@ -75,18 +74,18 @@ public class Mappa extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        /**if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this,Login.class);
             startActivity(intent);
             this.finish();
-        }
+        }**/
 
     }
 
 //FUNZIONI PERSONALIZZATE
 
     //Apre la activity che mette il nuovo post
-    public void newMarker(View view) {
+    public void newMarker() {
 
         Intent myIntent = new Intent(this, SetMarker.class);
         startActivity(myIntent);
