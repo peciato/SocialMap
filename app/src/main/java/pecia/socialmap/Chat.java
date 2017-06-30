@@ -55,8 +55,8 @@ public class Chat extends Activity {
             key = (String) savedInstanceState.getSerializable("keyPost");
         }
 
-        imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
-        username = (TextView) this.findViewById(R.id.userName);
+        /**imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
+        username = (TextView) this.findViewById(R.id.userName);**/
 
     }
 
@@ -75,9 +75,9 @@ public class Chat extends Activity {
             this.finish();
         }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        /**FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
-        username.setText(user.getDisplayName());
+        username.setText(user.getDisplayName());**/
 
          mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

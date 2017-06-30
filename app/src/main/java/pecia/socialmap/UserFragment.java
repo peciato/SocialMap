@@ -29,7 +29,7 @@ public class UserFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.fragment_user, container, false);
-        imgProfilePic = (ImageView) myView.findViewById(R.id.imageView2);
+        imgProfilePic = (ImageView) myView.findViewById(R.id.profile_image);
         username = (TextView) myView.findViewById(R.id.textView4);
 
 

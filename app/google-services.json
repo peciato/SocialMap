@@ -15,15 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "897467790150-ilfaad1oeolkakrrhkbnkn7l5eutg79c.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "pecia.socialmap",
-            "certificate_hash": "3a370246def80d1335b2b500628a500386c20223"
-          }
-        },
-        {
-          "client_id": "897467790150-1mfv5v4a273rf4f8nami6144r2kpgk4h.apps.googleusercontent.com",
+          "client_id": "897467790150-9024j4gngs014ik3laovh1p9ppuf4jpu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "pecia.socialmap",

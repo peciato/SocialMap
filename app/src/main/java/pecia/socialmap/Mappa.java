@@ -8,6 +8,7 @@ import android.location.LocationManager;
 
 import android.os.Bundle;
 
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
@@ -21,8 +22,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class Mappa extends AppCompatActivity
@@ -33,6 +37,8 @@ public class Mappa extends AppCompatActivity
 
     private MyMapFragment mapFrag;
     public static LocationManager locationManager;
+    private ImageView imgProfilePic;
+    FloatingActionButton fab;
 
 
 
@@ -42,15 +48,17 @@ public class Mappa extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mappa);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 newMarker();
             }
         });
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -61,6 +69,10 @@ public class Mappa extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        imgProfilePic = (ImageView) this.findViewById(R.id.profile_user);
+
+
 
         //aggiungo mapfragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -79,6 +91,8 @@ public class Mappa extends AppCompatActivity
             startActivity(intent);
             this.finish();
         }**/
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
 
     }
 
@@ -142,6 +156,7 @@ public class Mappa extends AppCompatActivity
             transaction.replace(R.id.content_frame, mapFrag);
             transaction.addToBackStack(MyMapFragment.class.getName());
             transaction.commit();
+            fab.setVisibility(View.VISIBLE);
 
         } else if (id == R.id.nav_user_layout) {
 
@@ -156,6 +171,7 @@ public class Mappa extends AppCompatActivity
             transaction.replace(R.id.content_frame, userFragment);
             transaction.addToBackStack(UserFragment.class.getName());
             transaction.commit();
+            fab.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_post_layout) {
 
@@ -172,6 +188,7 @@ public class Mappa extends AppCompatActivity
             transaction.replace(R.id.content_frame, postFragment);
             transaction.addToBackStack(PostFragment.class.getName());
             transaction.commit();
+            fab.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_logout_layout) {
             FirebaseAuth.getInstance().signOut();

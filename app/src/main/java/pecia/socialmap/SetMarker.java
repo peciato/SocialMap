@@ -8,11 +8,14 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,12 +34,15 @@ public class SetMarker extends Activity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Boolean fotoPresente = false;
+    FloatingActionButton fab;
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_marker);
-        setWindowParams();
+        this.getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        //setWindowParams();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 ) {
             ActivityCompat.requestPermissions(this,
@@ -44,13 +50,25 @@ public class SetMarker extends Activity {
                     100);
 
         }
+
+        fab = (FloatingActionButton) findViewById(R.id.pict);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePhoto();
+            }
+        });
+
+        mImageView = (ImageView) findViewById(R.id.photo);
+        mImageView.setVisibility(View.GONE);
+
     }
 
     public void setWindowParams(){
         WindowManager.LayoutParams wlp = getWindow().getAttributes();
         wlp.dimAmount = 0;
         wlp.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+               WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         getWindow().setAttributes(wlp);
     }
 
@@ -111,7 +129,7 @@ public class SetMarker extends Activity {
         this.finish();
     }
 
-    public void takePhoto(View view) {
+    public void takePhoto() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                ) {
@@ -130,8 +148,9 @@ public class SetMarker extends Activity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView mImageView = (ImageView) findViewById(R.id.photo);
+
             mImageView.setImageBitmap(imageBitmap);
+            mImageView.setVisibility(View.VISIBLE);
             fotoPresente = true;
 
 

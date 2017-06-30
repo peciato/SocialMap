@@ -59,8 +59,9 @@
             android:name=".Mappa"
             android:label="@string/title_activity_main3"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SetMarker" />
-        //android:theme="@android:style/Theme.Dialog"
+        <activity android:name=".SetMarker"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+
         <activity android:name=".Chat" />
         <activity android:name=".Image_Activity"></activity>
     </application>

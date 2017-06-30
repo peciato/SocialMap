@@ -12,27 +12,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <com.pkmmte.view.CircularImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:border="true"
-        app:border_color="#EEEEEE"
-        app:border_width="4dp"
-        app:shadow="true"
-        app:srcCompat="@drawable/messenger_button_blue_bg_selector" />
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_user"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp" />
 
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Social Map"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textViewUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="" />
 
 </LinearLayout>

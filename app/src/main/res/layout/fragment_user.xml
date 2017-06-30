@@ -7,13 +7,14 @@
         android:orientation="vertical"
     android:id="@+id/userfragment">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:layout_gravity="center"
-        android:layout_marginTop="80dp"
-        app:srcCompat="?android:attr/colorBackground" />
+        android:layout_marginTop="50dp"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp" />
 
     <TextView
         android:id="@+id/textView4"

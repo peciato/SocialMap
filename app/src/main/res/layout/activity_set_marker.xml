@@ -5,23 +5,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:layout_editor_absoluteX="8dp"
     tools:layout_editor_absoluteY="8dp">
 
     <ImageView
         android:id="@+id/photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="25dp"
+        android:visibility="visible" />
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="10dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="3dp">
 
@@ -41,7 +45,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="10dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="3dp">
 
@@ -57,13 +63,16 @@
     </android.support.v7.widget.CardView>
 
 
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/pict"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:onClick="takePhoto"
-        android:text="Scatta Foto" />
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginBottom="0dp"
+        app:backgroundTint="@android:color/holo_blue_light"
+        app:elevation="18dp"
+        app:srcCompat="@drawable/ic_menu_camera" />
 
     <Button
         android:id="@+id/button7"
@@ -72,16 +81,6 @@
         android:layout_gravity="bottom"
         android:onClick="submit"
         android:text="Submit" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/pict"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_marginBottom="0dp"
-        app:backgroundTint="@android:color/holo_blue_light"
-        app:elevation="18dp"
-        app:srcCompat="@drawable/ic_menu_camera" />
 
 
 </LinearLayout>
