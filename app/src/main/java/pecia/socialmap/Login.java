@@ -73,7 +73,7 @@ public class Login extends AppCompatActivity implements
 
         //google
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                //.requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -134,12 +134,16 @@ public class Login extends AppCompatActivity implements
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.e("NOLOG", "NOLOG3");
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
+                Log.e("NOLOG", "NOLOG1");
                 firebaseAuthWithGoogle(account);
+                Log.e("NOLOG", "NOLOG2");
             } else {
-
+                Log.e("NOLOG", "NOLOG4");
+                appStart();
             }
         }
     }

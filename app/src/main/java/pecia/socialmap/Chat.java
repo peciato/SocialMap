@@ -18,8 +18,10 @@ import android.text.format.DateFormat;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,10 @@ public class Chat extends Activity {
     private Bitmap bitmap;
     private String id;
     private boolean actived;
+
+    private ImageView imgProfilePic;
+    private TextView username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +55,9 @@ public class Chat extends Activity {
             key = (String) savedInstanceState.getSerializable("keyPost");
         }
 
+        imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
+        username = (TextView) this.findViewById(R.id.userName);
+
     }
 
     @Override
@@ -60,6 +69,15 @@ public class Chat extends Activity {
         displayChatMess();
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            this.finish();
+        }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
+        username.setText(user.getDisplayName());
 
          mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
