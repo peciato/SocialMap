@@ -62,7 +62,9 @@
         <activity android:name=".SetMarker"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
 
-        <activity android:name=".Chat" />
+        <activity android:name=".Chat"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity android:name=".Image_Activity"></activity>
     </application>
 

@@ -197,6 +197,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
                                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
+
                                 if (newPost != null) {
                                     //altrimenti lo aggiunge
                                     Marker marker = mMap.addMarker(new MarkerOptions()

@@ -55,8 +55,8 @@ public class Chat extends Activity {
             key = (String) savedInstanceState.getSerializable("keyPost");
         }
 
-        /**imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
-        username = (TextView) this.findViewById(R.id.userName);**/
+        imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
+        username = (TextView) this.findViewById(R.id.userName);
 
     }
 
@@ -65,8 +65,11 @@ public class Chat extends Activity {
         super.onStart();
         id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         actived = false;
+        Log.d("qua", "mannaggia1");
         displayDescPost();
+        Log.d("qua", "mannaggia2");
         displayChatMess();
+        Log.d("qua", "mannaggi3");
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -75,18 +78,30 @@ public class Chat extends Activity {
             this.finish();
         }
 
-        /**FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
-        username.setText(user.getDisplayName());**/
+        username.setText(user.getDisplayName());
+        Log.d("qua", "mannaggi4");
 
-         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                Log.d("qua", "mannaggi5");
+
 
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                    String postattivo = postSnapshot.getValue(String.class);
-                    if(postattivo.equals(key)) {
+                    Log.d("qua", "mannaggi6");
+
+                    //String postattivo = postSnapshot.getValue(String.class);
+                    //String postattivo = postSnapshot.child("posts").getValue(String.class);
+                    NewPost postattivo = postSnapshot.getValue(NewPost.class);
+                    Log.d("qua", "mannaggi7");
+
+                    if(postattivo.key.equals(key)) {
+                        Log.d("qua", "mannaggi8");
+
                         actived = true;
+
                         break;
                     }
                 }
@@ -109,6 +124,7 @@ public class Chat extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
+                //NewPost newPost = dataSnapshot.child("posts").child(key).getValue(NewPost.class);
                 title.setText(newPost.titolo);
                 description.setText(newPost.messaggio);
                 if (newPost.image != null) {
