@@ -60,6 +60,7 @@
             android:label="@string/title_activity_main3"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SetMarker"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
 
         <activity android:name=".Chat"

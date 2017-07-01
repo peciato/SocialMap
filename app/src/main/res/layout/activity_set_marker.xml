@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#4f4f55"
     tools:layout_editor_absoluteX="8dp"
     tools:layout_editor_absoluteY="8dp">
 
@@ -70,7 +71,7 @@
         android:layout_gravity="center"
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginBottom="0dp"
-        app:backgroundTint="@android:color/holo_blue_light"
+        app:backgroundTint="#2de8c8"
         app:elevation="18dp"
         app:srcCompat="@drawable/ic_menu_camera" />
 

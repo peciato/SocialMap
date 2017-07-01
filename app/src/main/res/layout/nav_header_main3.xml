@@ -12,13 +12,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_user"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_gravity="center"
-        android:src="@drawable/com_facebook_profile_picture_blank_square"
-        app:civ_border_color="#FF000000"
+        android:src="@drawable/logoprova"
+        app:civ_border_color="#2de8c8"
         app:civ_border_width="2dp" />
 
 

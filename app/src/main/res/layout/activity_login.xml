@@ -14,10 +14,11 @@
         android:id="@+id/sign_in_button"
         android:layout_width="255dp"
         android:layout_height="55dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:elevation="0dp"
-        android:text="@string/google_in">
+        android:text="@string/google_in"
+        android:layout_marginBottom="8dp"
+        android:layout_above="@+id/login_button"
+        android:layout_centerHorizontal="true">
 
     </com.google.android.gms.common.SignInButton>
 
@@ -27,9 +28,9 @@
         android:layout_height="50dp"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:layout_below="@+id/sign_in_button"
-        android:layout_alignEnd="@+id/sign_in_button"
-        android:layout_marginTop="26dp" />
+        android:layout_marginBottom="85dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/sign_in_button" />
 </RelativeLayout>
 
 

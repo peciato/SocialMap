@@ -4,6 +4,9 @@ import android.app.FragmentTransaction;
 
 import android.content.Intent;
 
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.LocationManager;
 
 import android.os.Bundle;
@@ -66,9 +69,17 @@ public class Mappa extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-
+        Resources res = getResources();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setBackgroundColor(Color.parseColor("#353535"));
+
+        try {
+            navigationView.setItemTextColor(ColorStateList.createFromXml(res,res.getXml(R.color.color_menu)));
+            navigationView.setItemIconTintList(ColorStateList.createFromXml(res,res.getXml(R.color.color_menu)));
+        } catch (Exception ex) {
+            Log.e("Error", "Exception loading drawable");
+        }
 
         imgProfilePic = (ImageView) this.findViewById(R.id.profile_user);
 
