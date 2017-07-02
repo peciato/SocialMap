@@ -7,13 +7,13 @@
     android:orientation="horizontal">
 
     <EditText
+        android:id="@+id/input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColorHint="#CFD8DC"
-        android:textColor="#CFD8DC"
         android:hint="Write a comment"
-        android:id="@+id/input"/>
+        android:textColor="#CFD8DC"
+        android:textColorHint="#2de8c8" />
 
     <ImageView
         android:layout_width="match_parent"

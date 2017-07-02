@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="#4f4f55"
     android:orientation="vertical"
     tools:context="pecia.socialmap.Chat">
 
@@ -13,8 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="25dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="25dp"
         android:orientation="horizontal">
 
         <TextView
@@ -22,26 +22,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="15dp"
             android:text="TextView"
             android:textAllCaps="true"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgUser"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="15dp"
+            app:civ_border_color="#2de8c8"
+            app:civ_border_width="2dp"
             app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="7dp"
-        android:elevation="0dp"
         android:layout_weight="1"
+        android:elevation="0dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -53,40 +56,60 @@
             card_view:cardCornerRadius="2dp"
             card_view:cardElevation="3dp">
 
-            <TextView
-                android:id="@+id/titleChat"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:elevation="1dp"
-                android:textAllCaps="true"
-                android:textColor="@android:color/black"
-                android:textSize="24sp" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="4">
 
-            <RelativeLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
-                android:elevation="1dp">
-
-                <TextView
-                    android:id="@+id/descrChat"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/titleChat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:elevation="1dp"
+                        android:text="ciao come va"
+                        android:textAllCaps="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/descrChat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:elevation="1dp"
+                        android:text="allora nfwefhsif fsuncis cefniusefb bgcdxvbn"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
                     android:elevation="1dp"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp" />
+                    android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/image_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:onClick="openImage" />
+                    <ImageView
+                        android:id="@+id/image_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:onClick="openImage" />
 
-            </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
 
         </android.support.v7.widget.CardView>
 
@@ -108,7 +131,7 @@
                 android:layout_marginTop="10dp"
                 android:elevation="1dp"
                 android:text="COMMENTS:"
-                android:textColor="@android:color/black"
+                android:textColor="#2de8c8"
                 android:textSize="16sp" />
 
             <ListView
@@ -119,6 +142,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="45dp"
+                android:divider="#2de8c8"
                 android:dividerHeight="1dp"
                 android:elevation="0dp" />
 
