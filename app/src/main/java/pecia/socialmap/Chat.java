@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.function.Consumer;
+
 
 public class Chat extends Activity {
 
@@ -38,6 +42,9 @@ public class Chat extends Activity {
 
     private ImageView imgProfilePic;
     private TextView username;
+
+    Consumer consumer1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,10 @@ public class Chat extends Activity {
 
         imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
         username = (TextView) this.findViewById(R.id.userName);
+
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        consumer1 = Chat::setUser;
 
     }
 
@@ -170,10 +181,16 @@ public class Chat extends Activity {
         this.finish();
     }
 
+    public void setUser(String name){
+
+    }
+
     private void displayChatMess() {
 
-        ListView listView = (ListView) findViewById(R.id.list_of_messagge);
-        ListAdapter adapter = new FirebaseListAdapter<ChatMess>(this,ChatMess.class,R.layout.list_item,
+        //ListView listView = (ListView) findViewById(R.id.list_of_messagge);
+        DatabaseReference  mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat");
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
+        ListAdapter adapter = new FirebaseListAdapter<ChatMess>(this,ChatMess.class,R.layout.commment,
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat"))
         {
 
@@ -193,7 +210,36 @@ public class Chat extends Activity {
             }
         };
 
-        listView.setAdapter(adapter);
+        //linearLayout.setAdapter(adapter);
+
+
+        ValueEventListener listener = new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                dataSnapshot.getChildren().forEach(
+
+                        // assuming you are using RetroLambda, if not, implement Consumer<? super T> action
+                        // update change ListView here
+                );
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError firebaseError)
+            {
+                //handle errors here
+            }
+        };
+
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child("teachers")
+                .orderByChild("teacherName")
+                .addValueEventListener(listener); //listener example below
+
+
     }
 
     public void openImage(View view) {

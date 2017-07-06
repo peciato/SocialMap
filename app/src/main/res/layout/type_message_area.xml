@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     android:gravity="bottom"
+    android:background="#ffffff"
     android:orientation="horizontal">
 
     <EditText
@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:hint="Write a comment"
-        android:textColor="#CFD8DC"
-        android:textColorHint="#2de8c8" />
+        android:textColor="#CFD8DC"/>
 
     <ImageView
         android:layout_width="match_parent"

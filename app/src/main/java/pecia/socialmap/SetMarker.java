@@ -3,9 +3,11 @@ package pecia.socialmap;
 import android.*;
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +16,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -30,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 
+import static android.content.ContentValues.TAG;
+
 public class SetMarker extends Activity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -37,11 +45,15 @@ public class SetMarker extends Activity {
     FloatingActionButton fab;
     ImageView mImageView;
 
+    private boolean isKeyboardOpen = false;
+
+    //getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_marker);
-        this.getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        //this.getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         //setWindowParams();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 ) {
@@ -62,6 +74,10 @@ public class SetMarker extends Activity {
         mImageView = (ImageView) findViewById(R.id.photo);
         mImageView.setVisibility(View.GONE);
 
+
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
     }
 
     public void setWindowParams(){
@@ -70,6 +86,17 @@ public class SetMarker extends Activity {
         wlp.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         getWindow().setAttributes(wlp);
+    }
+
+
+
+
+   /*Hide button when keyboard is open*/
+
+
+    public static float dpToPx(Context context, float valueInDp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
     public void submit(View view){

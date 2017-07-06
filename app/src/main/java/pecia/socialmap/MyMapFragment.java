@@ -183,7 +183,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
                 GeoFire geoFire = new GeoFire(ref);
 
-                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  0.6);
+                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  1.5);
                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
