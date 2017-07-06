@@ -1,6 +1,7 @@
 package pecia.socialmap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 
@@ -42,8 +45,6 @@ public class Chat extends Activity {
 
     private ImageView imgProfilePic;
     private TextView username;
-
-    Consumer consumer1;
 
 
     @Override
@@ -66,8 +67,6 @@ public class Chat extends Activity {
         username = (TextView) this.findViewById(R.id.userName);
 
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        consumer1 = Chat::setUser;
 
     }
 
@@ -212,33 +211,49 @@ public class Chat extends Activity {
 
         //linearLayout.setAdapter(adapter);
 
-
-        ValueEventListener listener = new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                dataSnapshot.getChildren().forEach(
-
-                        // assuming you are using RetroLambda, if not, implement Consumer<? super T> action
-                        // update change ListView here
-                );
-            }
-
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            public ArrayList<String> Userlist;
 
             @Override
-            public void onCancelled(DatabaseError firebaseError)
-            {
-                //handle errors here
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                collectAllChatMess(dataSnapshot);
             }
-        };
 
-        FirebaseDatabase.getInstance()
-                .getReference()
-                .child("teachers")
-                .orderByChild("teacherName")
-                .addValueEventListener(listener); //listener example below
+            @Override
+            public void onCancelled(DatabaseError data){}
 
+
+
+        });
+
+
+    }
+
+    public void collectAllChatMess(DataSnapshot dataSnapshot){
+
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
+
+        for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+            Log.d("chat", "mannaggi6");
+
+            //String postattivo = postSnapshot.getValue(String.class);
+            //String postattivo = postSnapshot.child("posts").getValue(String.class);
+            ChatMess postattivo = postSnapshot.getValue(ChatMess.class);
+            Log.d("chat", "mannaggi7");
+            //View commento = new View(this.getApplicationContext());
+            LayoutInflater inflater= (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inflater.inflate(R.layout.commment, null);
+            TextView messText,messUser,messTime;
+            messText = (TextView) v.findViewById(R.id.message_text);
+            messUser = (TextView) v.findViewById(R.id.message_user);
+            messTime = (TextView) v.findViewById(R.id.message_time);
+
+            messText.setText(postattivo.getMessText());
+            messUser.setText(postattivo.getMessUser());
+            messTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",postattivo.getMessTime()));
+            linearLayout.addView(v,0);
+        }
 
     }
 
