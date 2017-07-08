@@ -12,6 +12,7 @@ public class NewPost{
     public String titolo;
     public String messaggio;
     public String utente;
+    public String utenteID;
     public double lat;
     public double longi;
     public String image;
@@ -20,11 +21,12 @@ public class NewPost{
     public NewPost() { // construttore di default richiesto da Firebase
     }
 
-    public NewPost(String titolo, String post, String utente, String key) {
+    public NewPost(String titolo, String post, String utente, String utenteID, String key) {
 
         this.titolo = titolo;
         this.messaggio = post;
         this.utente = utente;
+        this.utenteID = utenteID;
         this.key = key;
 
     }

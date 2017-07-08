@@ -9,11 +9,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -252,14 +254,17 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
                     @Override
                     public void onKeyMoved(String key, GeoLocation location) {
+                        Log.e("keymov",key);
                     }
 
                     @Override
                     public void onGeoQueryReady() {
+                        Log.e("geoquey","");
                     }
 
                     @Override
                     public void onGeoQueryError(DatabaseError error) {
+                        Log.e("geoqueryerror","");
                     }
                 });
 

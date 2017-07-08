@@ -1,5 +1,6 @@
 package pecia.socialmap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.Nullable;
@@ -9,11 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +33,6 @@ public class PostFragment extends Fragment {
 
     View myView;
     private String id;
-    final NewPost newPost1 = new NewPost();
 
 
     @Nullable
@@ -48,23 +51,32 @@ public class PostFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        displayChatMess();
+    }
+
     private void displayChatMess() {
 
         String id2 = id;
         ListView listView = (ListView) getActivity().findViewById(R.id.list_of_post);
-        ListAdapter adapter = new FirebaseListAdapter<String>(getActivity(),String.class,R.layout.list_item,
+        ListAdapter adapter = new FirebaseListAdapter<NewPost>(getActivity(),NewPost.class,R.layout.list_item,
                 FirebaseDatabase.getInstance().getReference().child("postattivi").child(id2))
         {
 
             @Override
-            protected void populateView(View v, String model, int position) {
+            protected void populateView(View v, NewPost model, int position) {
 
                 TextView messText,messUser,messTime;
                 messText = (TextView) v.findViewById(R.id.message_text);
+                messTime = (TextView) v.findViewById(R.id.message_time);
                 messUser = (TextView) v.findViewById(R.id.message_user);
 
 
-                messText.setText(model);
+                messText.setText(model.titolo);
+                messUser.setText(model.messaggio);
+                messTime.setText(model.utente);
 
 
 
@@ -73,29 +85,21 @@ public class PostFragment extends Fragment {
         };
 
         listView.setAdapter(adapter);
-    }
-
-    private void retPost(String key){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                NewPost newPost = snapshot.getValue(NewPost.class);
-                if(newPost!=null) {
+                NewPost post =  (NewPost) parent.getItemAtPosition(position);
 
-                    newPost1.titolo = newPost.titolo;
-                    newPost1.messaggio = newPost.messaggio;
-                    displayChatMess();
-                }
+                Intent intent = new Intent(getActivity(), Chat.class);
+                intent.putExtra("keyPost", post.key);
+                startActivity(intent);
 
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
     }
+
+
 }

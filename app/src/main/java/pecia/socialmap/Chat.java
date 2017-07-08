@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
+import com.firebase.geofire.GeoFire;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -46,6 +49,7 @@ public class Chat extends Activity {
 
     private ImageView imgProfilePic;
     private TextView username;
+    private NewPost postattivo;
 
 
     @Override
@@ -67,7 +71,9 @@ public class Chat extends Activity {
         imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
         username = (TextView) this.findViewById(R.id.userName);
 
+
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
 
     }
 
@@ -76,11 +82,8 @@ public class Chat extends Activity {
         super.onStart();
         id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         actived = false;
-        Log.d("qua", "mannaggia1");
         displayDescPost();
-        Log.d("qua", "mannaggia2");
         displayChatMess();
-        Log.d("qua", "mannaggi3");
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -92,29 +95,31 @@ public class Chat extends Activity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
         username.setText(user.getDisplayName());
-        Log.d("qua", "mannaggi4");
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Log.d("qua", "mannaggi5");
 
 
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                    Log.d("qua", "mannaggi6");
 
                     //String postattivo = postSnapshot.getValue(String.class);
                     //String postattivo = postSnapshot.child("posts").getValue(String.class);
-                    NewPost postattivo = postSnapshot.getValue(NewPost.class);
-                    Log.d("qua", "mannaggi7");
+                    postattivo = postSnapshot.getValue(NewPost.class);
 
                     if(postattivo.key.equals(key)) {
-                        Log.d("qua", "mannaggi8");
+
+                        if(postattivo.utenteID.equals(id)) {
+                            Button deleteButton = (Button) findViewById(R.id.deletebutton);
+                            deleteButton.setVisibility(View.VISIBLE);
+                        }
 
                         actived = true;
 
                         break;
                     }
+
+
                 }
             }
              @Override
@@ -122,6 +127,8 @@ public class Chat extends Activity {
 
              }
          });
+
+
     }
 
     private void displayDescPost() {
@@ -169,7 +176,7 @@ public class Chat extends Activity {
 
         if(!actived && id!=null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id).push();
-            mDatabase.setValue(key);
+            mDatabase.setValue(postattivo);
         }
         FirebaseMessaging.getInstance().subscribeToTopic(key);
     }
@@ -180,13 +187,9 @@ public class Chat extends Activity {
         this.finish();
     }
 
-    public void setUser(String name){
-
-    }
 
     private void displayChatMess() {
 
-        //ListView listView = (ListView) findViewById(R.id.list_of_messagge);
         DatabaseReference  mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat");
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
         ListAdapter adapter = new FirebaseListAdapter<ChatMess>(this,ChatMess.class,R.layout.commment,
@@ -262,6 +265,54 @@ public class Chat extends Activity {
         intent.putExtra("image",bitmap );
         startActivity(intent);
     }
+
+    public void deletePost(View view) {
+        if(postattivo!=null) {
+
+            //Rimozione da post
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            Query applesQuery = ref.child("posts").orderByChild("key").equalTo(postattivo.key);
+
+            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                        appleSnapshot.getRef().removeValue();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            //Rimozione da postattivi
+            ref = FirebaseDatabase.getInstance().getReference();
+            applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(postattivo.key);
+            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                        appleSnapshot.getRef().removeValue();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            //rimozione da geofire
+            ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
+            GeoFire geoFire = new GeoFire(ref);
+            geoFire.removeLocation(postattivo.key);
+
+            this.finish();
+        }
+    }
+
 
 }
 

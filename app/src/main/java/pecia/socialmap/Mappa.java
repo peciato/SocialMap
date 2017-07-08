@@ -97,11 +97,11 @@ public class Mappa extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        /**if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this,Login.class);
             startActivity(intent);
             this.finish();
-        }**/
+        }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         //Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
 

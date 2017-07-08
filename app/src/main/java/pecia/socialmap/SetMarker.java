@@ -124,8 +124,15 @@ public class SetMarker extends Activity {
 
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").push();
-        NewPost newPost = new NewPost(titolo,post, FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),mDatabase.getKey());
+        String utente = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        String utenteId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        NewPost newPost = new NewPost(titolo,post,utente,utenteId ,mDatabase.getKey());
         LatLng latLng = ((MyApplication) this.getApplication()).getLatLng();
+
+        if (latLng == null) {
+            Toast.makeText(this, "POSIZIONE NON TROVATA", Toast.LENGTH_SHORT).show();
+            return;
+        }
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
 
