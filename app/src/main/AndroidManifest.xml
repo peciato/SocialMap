@@ -60,22 +60,31 @@
             android:label="@string/title_activity_main3"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".SetMarker"
-            android:windowSoftInputMode="stateVisible|adjustResize"
+        <activity
+            android:name=".SetMarker"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.no" />
-
-
-        <activity android:name=".Chat"
             android:theme="@style/AppTheme.no"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
+            android:name=".Chat"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.no"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Image_Activity"
 
-        <activity android:name=".Image_Activity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" />
 
-        </activity>
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:name=".FirebaseIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
