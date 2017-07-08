@@ -11,10 +11,12 @@ public class ChatMess {
     private String messText;
     private String messUser;
     private long messTime;
+    private String topic;
 
-    public ChatMess(String messText, String messUser) {
+    public ChatMess(String messText, String messUser, String topic) {
         this.messText = messText;
         this.messUser = messUser;
+        this.topic = topic;
         messTime = new Date().getTime();
     }
 
@@ -43,5 +45,13 @@ public class ChatMess {
 
     public void setMessTime(long messTime) {
         this.messTime = messTime;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

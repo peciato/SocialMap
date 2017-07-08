@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -160,7 +161,7 @@ public class Chat extends Activity {
             Toast.makeText(this, "Inserisci Messaggio", Toast.LENGTH_SHORT).show();
             return;
         }
-        ChatMess chatMess = new ChatMess(messaggio, FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        ChatMess chatMess = new ChatMess(messaggio, FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), key);
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat").push();
         mDatabase.setValue(chatMess);
@@ -170,8 +171,7 @@ public class Chat extends Activity {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id).push();
             mDatabase.setValue(key);
         }
-
-
+        FirebaseMessaging.getInstance().subscribeToTopic(key);
     }
 
     @Override
