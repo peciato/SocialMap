@@ -192,8 +192,6 @@ public class Mappa extends AppCompatActivity
             //controllo se gia c'è un user fragment aperto
             Boolean fragmentPopped = mManager.popBackStackImmediate (PostFragment.class.getName(), 1);
 
-            Log.e("frag",fragmentPopped.toString());
-
             postFragment = new PostFragment();
 
             transaction.replace(R.id.content_frame, postFragment);

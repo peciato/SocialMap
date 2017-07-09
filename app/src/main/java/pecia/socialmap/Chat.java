@@ -50,6 +50,7 @@ public class Chat extends Activity {
     private ImageView imgProfilePic;
     private TextView username;
     private NewPost postattivo;
+    private NewPost newPost;
 
 
     @Override
@@ -85,7 +86,6 @@ public class Chat extends Activity {
         displayDescPost();
         displayChatMess();
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this, Login.class);
             startActivity(intent);
@@ -96,6 +96,7 @@ public class Chat extends Activity {
         Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
         username.setText(user.getDisplayName());
 
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -103,8 +104,6 @@ public class Chat extends Activity {
 
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
 
-                    //String postattivo = postSnapshot.getValue(String.class);
-                    //String postattivo = postSnapshot.child("posts").getValue(String.class);
                     postattivo = postSnapshot.getValue(NewPost.class);
 
                     if(postattivo.key.equals(key)) {
@@ -141,7 +140,7 @@ public class Chat extends Activity {
         mDatabase.child("posts").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                NewPost newPost = dataSnapshot.getValue(NewPost.class);
+                newPost = dataSnapshot.getValue(NewPost.class);
                 //NewPost newPost = dataSnapshot.child("posts").child(key).getValue(NewPost.class);
                 title.setText(newPost.titolo);
                 description.setText(newPost.messaggio);
@@ -173,10 +172,9 @@ public class Chat extends Activity {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat").push();
         mDatabase.setValue(chatMess);
 
-
         if(!actived && id!=null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id).push();
-            mDatabase.setValue(postattivo);
+            mDatabase.setValue(newPost);
         }
         FirebaseMessaging.getInstance().subscribeToTopic(key);
     }
@@ -238,13 +236,9 @@ public class Chat extends Activity {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
 
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-            Log.d("chat", "mannaggi6");
 
-            //String postattivo = postSnapshot.getValue(String.class);
-            //String postattivo = postSnapshot.child("posts").getValue(String.class);
+
             ChatMess postattivo = postSnapshot.getValue(ChatMess.class);
-            Log.d("chat", "mannaggi7");
-            //View commento = new View(this.getApplicationContext());
             LayoutInflater inflater= (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = inflater.inflate(R.layout.commment, null);
             TextView messText,messUser,messTime;
@@ -269,27 +263,10 @@ public class Chat extends Activity {
     public void deletePost(View view) {
         if(postattivo!=null) {
 
-            //Rimozione da post
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-            Query applesQuery = ref.child("posts").orderByChild("key").equalTo(postattivo.key);
-
-            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                        appleSnapshot.getRef().removeValue();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
             //Rimozione da postattivi
-            ref = FirebaseDatabase.getInstance().getReference();
-            applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(postattivo.key);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            Query applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(postattivo.key);
             applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

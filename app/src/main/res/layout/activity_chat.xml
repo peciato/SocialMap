@@ -87,7 +87,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:elevation="1dp"
-                        android:text="ciao come va"
                         android:textAllCaps="true"
                         android:textColor="@android:color/black"
                         android:textSize="24sp"
@@ -99,7 +98,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:elevation="1dp"
-                        android:text="allora nfwefhsif fsuncis cefniusefb bgcdxvbn"
                         android:textColor="@android:color/black"
                         android:textSize="18sp" />
                 </LinearLayout>

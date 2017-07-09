@@ -55,7 +55,6 @@ public class Login extends AppCompatActivity implements
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                appStart();
             }
 
             @Override
@@ -131,21 +130,21 @@ public class Login extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            Log.e("NOLOG", "NOLOG3");
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                Log.e("NOLOG", "NOLOG1");
                 firebaseAuthWithGoogle(account);
-                Log.e("NOLOG", "NOLOG2");
             } else {
-                Log.e("NOLOG", "NOLOG4");
-                appStart();
             }
         }
+        else {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
 
 
@@ -160,7 +159,6 @@ public class Login extends AppCompatActivity implements
             appStart();
         }
         else {
-            Log.e("NOLOG", "NOLOG");
         }
     }
 
@@ -236,8 +234,7 @@ public class Login extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-
+                            appStart();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

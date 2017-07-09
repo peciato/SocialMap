@@ -37,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -56,7 +57,9 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     GoogleApiClient mGoogleApiClient;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private BitmapDescriptor icon ;
-
+    private DatabaseReference ref;
+    private GeoFire geoFire;
+    private GeoQuery geoQuery;
 
     ArrayList<MyMarker> arrayMarker = new ArrayList<MyMarker>();
 
@@ -71,6 +74,9 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         super.onCreate(bundle);
         icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name);
         getMaps();
+        ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
+        geoFire = new GeoFire(ref);
+        geoQuery = null;
 
     }
 
@@ -178,14 +184,12 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
             @Override
             public void onLocationChanged(Location location) {
 
+                if(geoQuery != null) {
+                    geoQuery.removeAllListeners();
+                }
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) con.getApplication()).setLatLng(latLng);
-
-
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
-                GeoFire geoFire = new GeoFire(ref);
-
-                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  1.5);
+                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  1.5);
                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
@@ -194,7 +198,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                         if (arrayMarker.indexOf(new MyMarker(key)) != -1 ) return;
 
                         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-                        mDatabase.addValueEventListener(new ValueEventListener() {
+                        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -211,8 +215,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
                                     arrayMarker.add(new MyMarker(marker, newPost.key));
 
-                                    //rimuove listener
-                                    mDatabase.removeEventListener(this);
+
                                 }
 
 
@@ -229,7 +232,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                     public void onKeyExited(String key) {
 
                         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-                        mDatabase.addValueEventListener(new ValueEventListener() {
+                        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -239,9 +242,27 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                                     int index = arrayMarker.indexOf(new MyMarker(newPost.key));
                                     Marker m =  arrayMarker.get(index).getMarker();
                                     m.remove();
+                                    arrayMarker.remove(index);
 
-                                    //rimuove listener
-                                    mDatabase.removeEventListener(this);
+
+
+                                    //Rimozione da post
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                    Query applesQuery = ref.child("posts").orderByChild("key").equalTo(newPost.key);
+
+                                    applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                                                appleSnapshot.getRef().removeValue();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 }
 
                             }
@@ -250,21 +271,23 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
+
+
                     }
 
                     @Override
                     public void onKeyMoved(String key, GeoLocation location) {
-                        Log.e("keymov",key);
+
                     }
 
                     @Override
                     public void onGeoQueryReady() {
-                        Log.e("geoquey","");
+
                     }
 
                     @Override
                     public void onGeoQueryError(DatabaseError error) {
-                        Log.e("geoqueryerror","");
+
                     }
                 });
 
