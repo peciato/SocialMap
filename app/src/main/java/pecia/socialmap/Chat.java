@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class Chat extends Activity {
     private TextView username;
     private NewPost postattivo;
     private NewPost newPost;
+    private boolean tokenPresent = false;
+    private String tokenAttuale = FirebaseInstanceId.getInstance().getToken();
 
 
     @Override
@@ -71,11 +74,40 @@ public class Chat extends Activity {
 
         imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
         username = (TextView) this.findViewById(R.id.userName);
+        displayChatMess();
+        checkTokenPresente();
 
 
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
+    }
+
+    public void checkTokenPresente(){
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
+        Log.d("qua", "sono quaaaaaaaaaaa1");
+        mDatabase.child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("qua", "sono quaaaaaaaaaaa2");
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                    Log.d("ciao", "sono quaaaaaaaaaaa5");
+                    String token = postSnapshot.getValue(String.class);
+                    Log.d("ciao", "siamo seri13.5"+token.toString()+"::::"+tokenAttuale);
+                    if (token.toString().equals(tokenAttuale)){
+                        Log.d("ciao", "sono quaaaaaaaaaa62");
+                        tokenPresent = true;
+                        Log.d("ciao", "sono quaaaaaaaaaaa9" + tokenPresent );
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError firebaseError) {
+                //Username Does Not Exist
+            }
+        });
     }
 
     @Override
@@ -84,7 +116,7 @@ public class Chat extends Activity {
         id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         actived = false;
         displayDescPost();
-        displayChatMess();
+        //displayChatMess();
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this, Login.class);
@@ -97,6 +129,7 @@ public class Chat extends Activity {
         username.setText(user.getDisplayName());
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
+
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -105,6 +138,7 @@ public class Chat extends Activity {
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
 
                     postattivo = postSnapshot.getValue(NewPost.class);
+
 
                     if(postattivo.key.equals(key)) {
 
@@ -117,8 +151,6 @@ public class Chat extends Activity {
 
                         break;
                     }
-
-
                 }
             }
              @Override
@@ -126,8 +158,6 @@ public class Chat extends Activity {
 
              }
          });
-
-
     }
 
     private void displayDescPost() {
@@ -172,11 +202,23 @@ public class Chat extends Activity {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat").push();
         mDatabase.setValue(chatMess);
 
+        //mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
+
+        //mDatabase.setValue(refreshedToken);
+
+
         if(!actived && id!=null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id).push();
             mDatabase.setValue(newPost);
         }
-        FirebaseMessaging.getInstance().subscribeToTopic(key);
+        //FirebaseMessaging.getInstance().;
+        if(tokenPresent != true){
+            DatabaseReference mDatabaseToken = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
+            Log.d("ciao", "siamo seriiiiiiiiiiiiiiiiiiiiiiii" );
+            mDatabaseToken.setValue(tokenAttuale);
+            checkTokenPresente();
+
+        }
     }
 
     @Override
@@ -189,6 +231,7 @@ public class Chat extends Activity {
     private void displayChatMess() {
 
         DatabaseReference  mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat");
+        DatabaseReference  mDatabaseToken = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token");
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
         ListAdapter adapter = new FirebaseListAdapter<ChatMess>(this,ChatMess.class,R.layout.commment,
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat"))
@@ -217,8 +260,16 @@ public class Chat extends Activity {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                DatabaseReference mDatabaseToken;
                 collectAllChatMess(dataSnapshot);
+                /**Log.d("ciao", "siamo seri0.57876" + tokenPresent);
+                pushToken();
+                Log.d("ciao", "siamo seri0.5" + tokenPresent);
+                if(tokenPresent == false){
+                    mDatabaseToken = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
+                    Log.d("ciao", "siamo seri" + tokenPresent );
+                    mDatabaseToken.setValue(tokenAttuale);
+                }**/
             }
 
             @Override
@@ -229,6 +280,31 @@ public class Chat extends Activity {
         });
 
 
+    }
+
+    public void pushToken(){
+        final DatabaseReference  mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token");
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("ciao", "siamo seri5");
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                    Log.d("ciao", "siamo seri3");
+                    String token = postSnapshot.getValue(String.class);
+                    Log.d("ciao", "siamo seri13.5"+token.toString()+"::::"+tokenAttuale);
+                    if (token.toString().equals(tokenAttuale)){
+                        Log.d("ciao", "siamo seri1");
+                        tokenPresent = true;
+                        Log.d("ciao", "siamo seri1.5" + tokenPresent );
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void collectAllChatMess(DataSnapshot dataSnapshot){

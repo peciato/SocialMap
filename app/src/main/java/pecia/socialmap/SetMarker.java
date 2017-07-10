@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.ByteArrayOutputStream;
 
@@ -44,6 +45,7 @@ public class SetMarker extends Activity {
     Boolean fotoPresente = false;
     FloatingActionButton fab;
     ImageView mImageView;
+    private String key;
 
     private boolean isKeyboardOpen = false;
 
@@ -135,6 +137,7 @@ public class SetMarker extends Activity {
         }
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
+        key = newPost.key;
 
         if(fotoPresente) {
             ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
@@ -158,6 +161,11 @@ public class SetMarker extends Activity {
         }
 
         geoFire.setLocation(newPost.key , new GeoLocation(newPost.lat,newPost.longi) );
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d("ciao", "siamo seri0.555555" + token.toString());
+        mDatabase.setValue(token.toString());
 
 
         this.finish();

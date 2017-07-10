@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 
 public class Mappa extends AppCompatActivity
@@ -52,6 +53,8 @@ public class Mappa extends AppCompatActivity
         setContentView(R.layout.activity_mappa);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d("bubu", "Refreshed token: " + refreshedToken);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +64,8 @@ public class Mappa extends AppCompatActivity
             }
         });
 
-
+        Intent intent = new Intent(this, FirebaseIDService.class);
+        startService(intent);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
