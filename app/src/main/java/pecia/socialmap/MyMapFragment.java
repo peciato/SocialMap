@@ -40,7 +40,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -179,6 +182,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
         locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
 
+
         final Activity con = this.getActivity();
         locationListener = new LocationListener() {
             @Override
@@ -194,31 +198,50 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
 
-                        //se gia c'è questo marker esce
-                        if (arrayMarker.indexOf(new MyMarker(key)) != -1 ) return;
+
 
                         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
                         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
+
                                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
 
-                                if (newPost != null) {
-                                    //altrimenti lo aggiunge
-                                    Marker marker = mMap.addMarker(new MarkerOptions()
-                                            .position(new LatLng(newPost.lat, newPost.longi))
-                                            .title(newPost.titolo)
-                                            .snippet(newPost.messaggio)
-                                            .icon(icon)
-                                    );
+                                //se gia c'è questo marker controlla la durata ed esce
+                                if (arrayMarker.indexOf(new MyMarker(key)) != -1 ) {
 
-                                    arrayMarker.add(new MyMarker(marker, newPost.key));
+                                    if (newPost!=null) {
+                                        if ((new Date().getTime() - newPost.data) > TimeUnit.MINUTES.toMillis(newPost.durata))
+                                        {
+                                            int index = arrayMarker.indexOf(new MyMarker(newPost.key));
+                                            Marker m =  arrayMarker.get(index).getMarker();
+                                            m.remove();
+                                            arrayMarker.remove(index);
+                                        }
+                                    }
+                                    return;
+                                }
+                                else {
 
+                                    if (newPost != null) {
+
+                                        if ((new Date().getTime() - newPost.data) < TimeUnit.MINUTES.toMillis(newPost.durata)) {
+                                            //altrimenti lo aggiunge
+                                            Marker marker = mMap.addMarker(new MarkerOptions()
+                                                    .position(new LatLng(newPost.lat, newPost.longi))
+                                                    .title(newPost.titolo)
+                                                    .snippet(newPost.messaggio)
+                                                    .icon(icon)
+                                            );
+
+                                            arrayMarker.add(new MyMarker(marker, newPost.key));
+                                        }
+
+
+                                    }
 
                                 }
-
-
                             }
 
                             @Override
@@ -400,6 +423,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         locationManager.removeUpdates(locationListener);
     }
 
+    /*
     @Override
     public void onResume() {
 
@@ -412,5 +436,5 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-    }
+    }*/
 }

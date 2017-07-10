@@ -18,6 +18,8 @@ public class NewPost{
     public String image;
     public String imageUser;
     public String key;
+    public long durata;//espressa in minuti
+    public double data;
 
     public NewPost() { // construttore di default richiesto da Firebase
     }

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.firebase.geofire.GeoFire;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -119,7 +120,6 @@ public class Chat extends Activity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
 
                     postattivo = postSnapshot.getValue(NewPost.class);
@@ -152,7 +152,7 @@ public class Chat extends Activity {
         final ImageView imageView  = (ImageView) findViewById(R.id.image_post);
         final ImageView imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
         final TextView username = (TextView) this.findViewById(R.id.userName);
-        final String[] uri = new String[1];
+        final RequestManager pic = Glide.with(this);
 
         LinearLayout post = (LinearLayout) findViewById(R.id.post);
         post.setVisibility(View.VISIBLE);
@@ -171,7 +171,8 @@ public class Chat extends Activity {
                     imageView.setImageBitmap(bitmap);
                 }
                 username.setText(newPost.utente);
-                uri[0] = newPost.imageUser;
+                pic.load(newPost.imageUser).into(imgProfilePic);
+
             }
 
             @Override
@@ -180,7 +181,8 @@ public class Chat extends Activity {
             }
         });
 
-        Glide.with(this).load(uri[0]).into(imgProfilePic);
+
+
 
     }
 
@@ -199,7 +201,6 @@ public class Chat extends Activity {
         mDatabase.setValue(chatMess);
 
         //mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
-
         //mDatabase.setValue(refreshedToken);
 
 
@@ -310,7 +311,6 @@ public class Chat extends Activity {
 
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
 
-            Log.d("cnahb","prova1111");
             LinearLayout commenti = (LinearLayout) findViewById(R.id.commenti);
             commenti.setVisibility(View.VISIBLE);
 
@@ -336,9 +336,11 @@ public class Chat extends Activity {
         startActivity(intent);
     }
 
+    public void deleteComment(View view) {
+
+    }
     public void deletePost(View view) {
         if(postattivo!=null) {
-
 
             //Rimozione da postattivi
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();

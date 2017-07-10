@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -37,6 +38,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Time;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.ContentValues.TAG;
 
@@ -139,6 +143,9 @@ public class SetMarker extends Activity {
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
         key = newPost.key;
+        newPost.durata=1;
+        newPost.data = new Date().getTime();
+
 
         if(fotoPresente) {
             ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
