@@ -16,6 +16,7 @@ public class NewPost{
     public double lat;
     public double longi;
     public String image;
+    public String imageUser;
     public String key;
 
     public NewPost() { // construttore di default richiesto da Firebase

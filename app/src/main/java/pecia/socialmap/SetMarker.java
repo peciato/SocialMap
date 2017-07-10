@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
@@ -152,6 +153,17 @@ public class SetMarker extends Activity {
         }
 
 
+        /*ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
+        ImageView profile = new ImageView(getBaseContext());
+        Glide.with(this.getParent()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profile);
+        Bitmap imageBitmap = ((BitmapDrawable)profile.getDrawable()).getBitmap();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,bYtE);
+        byte[] byteArray = bYtE.toByteArray();
+        String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);*/
+        newPost.imageUser = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+
+
+
         mDatabase.setValue(newPost);
 
         String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -164,7 +176,6 @@ public class SetMarker extends Activity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d("ciao", "siamo seri0.555555" + token.toString());
         mDatabase.setValue(token.toString());
 
 

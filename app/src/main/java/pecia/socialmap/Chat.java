@@ -5,20 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.text.format.DateFormat;
 import android.widget.Toast;
@@ -36,10 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 
 public class Chat extends Activity {
@@ -48,9 +43,6 @@ public class Chat extends Activity {
     private Bitmap bitmap;
     private String id;
     private boolean actived;
-
-    private ImageView imgProfilePic;
-    private TextView username;
     private NewPost postattivo;
     private NewPost newPost;
     private boolean tokenPresent = false;
@@ -73,8 +65,7 @@ public class Chat extends Activity {
             key = (String) savedInstanceState.getSerializable("keyPost");
         }
 
-        imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
-        username = (TextView) this.findViewById(R.id.userName);
+
         displayChatMess();
         checkTokenPresente();
 
@@ -86,20 +77,14 @@ public class Chat extends Activity {
 
     public void checkTokenPresente(){
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-        Log.d("qua", "sono quaaaaaaaaaaa1");
         mDatabase.child("token").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("qua", "sono quaaaaaaaaaaa2");
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                    Log.d("ciao", "sono quaaaaaaaaaaa5");
                     String token = postSnapshot.getValue(String.class);
-                    Log.d("ciao", "siamo seri13.5"+token.toString()+"::::"+tokenAttuale);
                     if (token.toString().equals(tokenAttuale)){
-                        Log.d("ciao", "sono quaaaaaaaaaa62");
                         tokenPresent = true;
-                        Log.d("ciao", "sono quaaaaaaaaaaa9" + tokenPresent );
                     }
                 }
             }
@@ -126,8 +111,7 @@ public class Chat extends Activity {
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Glide.with(this).load(user.getPhotoUrl().toString()).into(imgProfilePic);
-        username.setText(user.getDisplayName());
+
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
 
@@ -166,6 +150,9 @@ public class Chat extends Activity {
         final TextView title = (TextView) findViewById(R.id.titleChat);
         final TextView description = (TextView) findViewById(R.id.descrChat);
         final ImageView imageView  = (ImageView) findViewById(R.id.image_post);
+        final ImageView imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
+        final TextView username = (TextView) this.findViewById(R.id.userName);
+        final String[] uri = new String[1];
 
 
         mDatabase.child("posts").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -180,6 +167,8 @@ public class Chat extends Activity {
                     bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     imageView.setImageBitmap(bitmap);
                 }
+                username.setText(newPost.utente);
+                uri[0] = newPost.imageUser;
             }
 
             @Override
@@ -187,6 +176,9 @@ public class Chat extends Activity {
 
             }
         });
+
+        Glide.with(this).load(uri[0]).into(imgProfilePic);
+
     }
 
     public void sendMessToServer(View view) {
@@ -215,7 +207,6 @@ public class Chat extends Activity {
         //FirebaseMessaging.getInstance().;
         if(tokenPresent != true){
             DatabaseReference mDatabaseToken = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
-            Log.d("ciao", "siamo seriiiiiiiiiiiiiiiiiiiiiiii" );
             mDatabaseToken.setValue(tokenAttuale);
             checkTokenPresente();
 
