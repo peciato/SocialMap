@@ -143,7 +143,7 @@ public class SetMarker extends Activity {
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
         key = newPost.key;
-        newPost.durata=1;
+        newPost.durata=1000;
         newPost.data = new Date().getTime();
 
 

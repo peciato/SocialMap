@@ -1,6 +1,8 @@
 package pecia.socialmap;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.Nullable;
@@ -59,20 +61,21 @@ public class PostFragment extends Fragment {
     private void displayChatMess() {
 
         String id2 = id;
+
         ListView listView = (ListView) getActivity().findViewById(R.id.list_of_post);
         ListAdapter adapter = new FirebaseListAdapter<NewPost>(getActivity(),NewPost.class,R.layout.list_item,
                 FirebaseDatabase.getInstance().getReference().child("postattivi").child(id2))
         {
-
             @Override
             protected void populateView(View v, NewPost model, int position) {
+
 
                 TextView messText,messUser,messTime;
                 messText = (TextView) v.findViewById(R.id.message_text);
                 messTime = (TextView) v.findViewById(R.id.message_time);
                 messUser = (TextView) v.findViewById(R.id.message_user);
 
-
+                if(id == model.utenteID) messText.setTextColor(Color.RED);
                 messText.setText(model.titolo);
                 messUser.setText(model.messaggio);
                 messTime.setText(model.utente);
