@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -143,7 +144,7 @@ public class Chat extends Activity {
                     if(postattivo.key.equals(key)) {
 
                         if(postattivo.utenteID.equals(id)) {
-                            Button deleteButton = (Button) findViewById(R.id.deletebutton);
+                            ImageButton deleteButton = (ImageButton) findViewById(R.id.deletebutton);
                             deleteButton.setVisibility(View.VISIBLE);
                         }
 
