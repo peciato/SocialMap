@@ -154,6 +154,9 @@ public class Chat extends Activity {
         final TextView username = (TextView) this.findViewById(R.id.userName);
         final String[] uri = new String[1];
 
+        LinearLayout post = (LinearLayout) findViewById(R.id.post);
+        post.setVisibility(View.VISIBLE);
+
 
         mDatabase.child("posts").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -308,7 +311,8 @@ public class Chat extends Activity {
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
 
             Log.d("cnahb","prova1111");
-
+            LinearLayout commenti = (LinearLayout) findViewById(R.id.commenti);
+            commenti.setVisibility(View.VISIBLE);
 
             ChatMess postattivo = postSnapshot.getValue(ChatMess.class);
             LayoutInflater inflater= (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
