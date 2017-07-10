@@ -48,6 +48,7 @@ public class Chat extends Activity {
     private NewPost newPost;
     private boolean tokenPresent = false;
     private String tokenAttuale = FirebaseInstanceId.getInstance().getToken();
+    private ArrayList<ChatMess> listaMessaggi;
 
 
     @Override
@@ -103,7 +104,8 @@ public class Chat extends Activity {
         id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         actived = false;
         displayDescPost();
-        //displayChatMess();
+
+
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this, Login.class);
@@ -228,28 +230,6 @@ public class Chat extends Activity {
 
         DatabaseReference  mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat");
         DatabaseReference  mDatabaseToken = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token");
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
-        ListAdapter adapter = new FirebaseListAdapter<ChatMess>(this,ChatMess.class,R.layout.commment,
-                FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat"))
-        {
-
-            @Override
-            protected void populateView(View v, ChatMess model, int position) {
-
-                TextView messText,messUser,messTime;
-                messText = (TextView) v.findViewById(R.id.message_text);
-                messUser = (TextView) v.findViewById(R.id.message_user);
-                messTime = (TextView) v.findViewById(R.id.message_time);
-
-                messText.setText(model.getMessText());
-                messUser.setText(model.getMessUser());
-                messTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",model.getMessTime()));
-
-
-            }
-        };
-
-        //linearLayout.setAdapter(adapter);
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             public ArrayList<String> Userlist;
@@ -259,7 +239,7 @@ public class Chat extends Activity {
                 DatabaseReference mDatabaseToken;
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
                 linearLayout.removeAllViews();
-                collectAllChatMess(dataSnapshot);
+                listaMessaggi = collectAllChatMess(dataSnapshot);
                 /**Log.d("ciao", "siamo seri0.57876" + tokenPresent);
                 pushToken();
                 Log.d("ciao", "siamo seri0.5" + tokenPresent);
@@ -305,10 +285,12 @@ public class Chat extends Activity {
         });
     }
 
-    public void collectAllChatMess(DataSnapshot dataSnapshot){
+    public ArrayList<ChatMess> collectAllChatMess(DataSnapshot dataSnapshot){
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
+        int index=0;
 
+        ArrayList<ChatMess> listaMessaggi = new ArrayList<ChatMess>();
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
 
             LinearLayout commenti = (LinearLayout) findViewById(R.id.commenti);
@@ -326,7 +308,11 @@ public class Chat extends Activity {
             messUser.setText(postattivo.getMessUser());
             messTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",postattivo.getMessTime()));
             linearLayout.addView(v,0);
+            listaMessaggi.add(index,postattivo);
+            v.setTag(index);
+            index++;
         }
+        return listaMessaggi;
 
     }
 
@@ -337,6 +323,30 @@ public class Chat extends Activity {
     }
 
     public void deleteComment(View view) {
+        int tagView = (int) view.getTag();
+        ChatMess mess = listaMessaggi.get(tagView);
+        if(mess == null) return;
+        if(postattivo!=null) {
+
+            //Rimozione da postattivi
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            Log.e("TIME",String.valueOf(mess.getMessTime()));
+            Query applesQuery = ref.child("posts").child(postattivo.key).child("chat").orderByChild("messTime").equalTo(mess.getMessTime());
+            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                        appleSnapshot.getRef().removeValue();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        ((ViewGroup) view.getParent()).removeView(view);
 
     }
     public void deletePost(View view) {
