@@ -67,7 +67,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".Chat"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.no"
             android:windowSoftInputMode="adjustPan" />
         <activity

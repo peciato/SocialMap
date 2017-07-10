@@ -261,6 +261,8 @@ public class Chat extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DatabaseReference mDatabaseToken;
+                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
+                linearLayout.removeAllViews();
                 collectAllChatMess(dataSnapshot);
                 /**Log.d("ciao", "siamo seri0.57876" + tokenPresent);
                 pushToken();
@@ -312,6 +314,8 @@ public class Chat extends Activity {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
 
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+
+            Log.d("cnahb","prova1111");
 
 
             ChatMess postattivo = postSnapshot.getValue(ChatMess.class);
