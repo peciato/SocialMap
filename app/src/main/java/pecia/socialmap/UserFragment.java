@@ -51,4 +51,11 @@ public class UserFragment extends Fragment {
         username.setText(user.getDisplayName());
 
     }
+
+    public void logOut(View view){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this.getActivity(), Login.class);
+        startActivity(intent);
+        this.getActivity().finish();
+    }
 }

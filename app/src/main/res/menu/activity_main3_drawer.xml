@@ -17,13 +17,4 @@
 
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_logout_layout"
-                android:icon="@drawable/ic_menu_slideshow"
-                android:title="@string/logout" />
-        </menu>
-    </item>
-
 </menu>

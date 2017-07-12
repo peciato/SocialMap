@@ -8,10 +8,12 @@ import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -74,10 +76,21 @@ public class PostFragment extends Fragment {
                 messText = (TextView) v.findViewById(R.id.message_text);
                 messTime = (TextView) v.findViewById(R.id.message_time);
                 messUser = (TextView) v.findViewById(R.id.message_user);
-
-                if(id == model.utenteID) messText.setTextColor(Color.RED);
-                messText.setText(model.titolo);
-                messUser.setText(model.messaggio);
+                Log.d("fuori if", "furi if");
+                Log.d("fuori if", id + " " + model.utenteID);
+                if(id.equals(model.utenteID)){
+                    Log.d("fuori if", "dentro if");
+                    messText.setTextColor(Color.RED);
+                    ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);
+                    icona.setVisibility(View.VISIBLE);
+                }
+                else{
+                    messText.setTextColor(Color.BLUE);
+                    ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);
+                    icona.setVisibility(View.GONE);
+                }
+                messText.setText(model.messaggio);
+                messUser.setText(model.titolo);
                 messTime.setText(model.utente);
 
 

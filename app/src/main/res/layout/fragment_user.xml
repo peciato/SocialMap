@@ -2,10 +2,11 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/userfragment"
     android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-    android:id="@+id/userfragment">
+    android:layout_height="match_parent"
+    android:background="#4f4f55"
+    android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
@@ -24,5 +25,16 @@
         android:gravity="center"
         android:textAlignment="center"
         android:textAllCaps="true"
+        android:textColor="#ffffff"
         android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/buttonLO"
+        style="@android:style/Widget.Material.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:onClick="logOut"
+        android:text="log out" />
 </LinearLayout>

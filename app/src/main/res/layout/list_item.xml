@@ -1,44 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginTop="5dp"
-    android:background="@android:color/white"
-    tools:context="pecia.socialmap.Chat">
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/message_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="4dp"
-        android:paddingTop="4dp"
-        android:textAllCaps="true"
-        android:textColor="@android:color/black"
-        android:textStyle="bold" />
+    <ImageView
+        android:id="@+id/imageViewMio"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/login"
+        android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/message_time"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="8sp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/message_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/message_user"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="4dp"
-        android:paddingTop="4dp"
-        android:textColor="@android:color/darker_gray" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/message_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="4dp"
+            android:paddingTop="4dp"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/message_user"
+            android:layout_marginTop="0dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="4dp"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="8sp" />
+    </LinearLayout>
+
+
+</LinearLayout>

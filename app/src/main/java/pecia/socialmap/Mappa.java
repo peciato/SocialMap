@@ -96,6 +96,8 @@ public class Mappa extends AppCompatActivity
         transaction.add(R.id.content_frame, mapFrag);
         transaction.commit();
 
+        navigationView.setCheckedItem(R.id.nav_map_layout);
+
     }
 
     @Override
@@ -119,6 +121,14 @@ public class Mappa extends AppCompatActivity
         Intent myIntent = new Intent(this, SetMarker.class);
         startActivity(myIntent);
 
+    }
+
+    public void logOut(View view){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, Login.class);
+        Log.d("cioooooo", "bliblu");
+        startActivity(intent);
+        finish();
     }
 
 
@@ -202,12 +212,6 @@ public class Mappa extends AppCompatActivity
             transaction.addToBackStack(PostFragment.class.getName());
             transaction.commit();
             fab.setVisibility(View.GONE);
-
-        } else if (id == R.id.nav_logout_layout) {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-            finish();
 
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

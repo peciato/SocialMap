@@ -111,9 +111,11 @@ public class SetMarker extends Activity {
         //Intserimento testo e controllo
         EditText ti = (EditText) findViewById(R.id.editText3);
         EditText pos = (EditText) findViewById(R.id.editText4);
+        EditText tim = (EditText) findViewById(R.id.editText7);
 
         String titolo = ti.getText().toString();
         String post = pos.getText().toString();
+        String time = tim.getText().toString();
 
         if (titolo.matches("")) {
             Toast.makeText(this, "Inserisci titolo", Toast.LENGTH_SHORT).show();
@@ -122,6 +124,11 @@ public class SetMarker extends Activity {
 
         if (post.matches("")) {
             Toast.makeText(this, "Inserisci messaggio", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (time.matches("")) {
+            Toast.makeText(this, "Inserisci minuti", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -143,7 +150,7 @@ public class SetMarker extends Activity {
         newPost.lat = latLng.latitude;
         newPost.longi = latLng.longitude;
         key = newPost.key;
-        newPost.durata=1000;
+        newPost.durata=Long.parseLong(time, 10);
         newPost.data = new Date().getTime();
 
 

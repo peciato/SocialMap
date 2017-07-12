@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -152,6 +153,7 @@ public class Chat extends Activity {
         final TextView title = (TextView) findViewById(R.id.titleChat);
         final TextView description = (TextView) findViewById(R.id.descrChat);
         final ImageView imageView  = (ImageView) findViewById(R.id.image_post);
+        final LinearLayout fotoView  = (LinearLayout) findViewById(R.id.fotoPost);
         final ImageView imgProfilePic = (ImageView) this.findViewById(R.id.imgUser);
         final TextView username = (TextView) this.findViewById(R.id.userName);
         final RequestManager pic = Glide.with(this);
@@ -171,6 +173,10 @@ public class Chat extends Activity {
                     byte[] decodedString = Base64.decode(newPost.image, Base64.DEFAULT);
                     bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     imageView.setImageBitmap(bitmap);
+                    fotoView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    fotoView.setVisibility(View.GONE);
                 }
                 username.setText(newPost.utente);
                 pic.load(newPost.imageUser).into(imgProfilePic);
@@ -303,6 +309,27 @@ public class Chat extends Activity {
             messText = (TextView) v.findViewById(R.id.message_text);
             messUser = (TextView) v.findViewById(R.id.message_user);
             messTime = (TextView) v.findViewById(R.id.message_time);
+            TextView username = (TextView) this.findViewById(R.id.userName);
+
+
+            String utenteMsg = postattivo.getMessUser();
+            String utenteLoggato = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
+            if(utenteMsg.equals(utenteLoggato)){
+                TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
+                delComment.setVisibility(View.VISIBLE);
+            }
+            else{
+                TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
+                delComment.setVisibility(View.GONE);
+            }
+
+            /**if(username.getText().equals(utenteMsg)){
+                messUser.setTypeface(null, Typeface.BOLD);
+            }
+            else{
+                messUser.setTypeface(null, Typeface.NORMAL);
+            }**/
 
             messText.setText(postattivo.getMessText());
             messUser.setText(postattivo.getMessUser());
@@ -323,7 +350,8 @@ public class Chat extends Activity {
     }
 
     public void deleteComment(View view) {
-        int tagView = (int) view.getTag();
+        View padre = (ViewGroup) view.getParent().getParent();
+        int tagView = (int) padre.getTag();
         ChatMess mess = listaMessaggi.get(tagView);
         if(mess == null) return;
         if(postattivo!=null) {
