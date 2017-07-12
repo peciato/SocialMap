@@ -420,8 +420,10 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     @Override
     public void onPause() {
         super.onPause();
+        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
         locationManager.removeUpdates(locationListener1);
+        locationManager = null;
         Log.e("REMOVE","GPS");
         //locationManager=null;
 
