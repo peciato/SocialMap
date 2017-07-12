@@ -3,6 +3,8 @@ package pecia.socialmap;
 import android.media.Image;
 import android.widget.ImageView;
 
+import java.util.Date;
+
 /**
  * Created by Francesco on 14/06/17.
  */
@@ -20,6 +22,7 @@ public class NewPost{
     public String key;
     public long durata;//espressa in minuti
     public double data;
+    public Date date;
 
     public NewPost() { // construttore di default richiesto da Firebase
     }
