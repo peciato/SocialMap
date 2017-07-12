@@ -3,11 +3,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:orientation="vertical"
     android:weightSum="1"
+    android:visibility="gone"
     tools:context="pecia.socialmap.Chat">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -180,7 +182,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="4dp"
                             android:elevation="1dp"
-                            android:text="COMMENTS:"
+                            android:text="@string/comments"
                             android:textColor="#2de8c8"
                             android:textSize="14sp" />
 

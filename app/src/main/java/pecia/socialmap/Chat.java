@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.firebase.geofire.GeoFire;
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -69,8 +70,6 @@ public class Chat extends Activity {
         }
 
 
-        displayChatMess();
-        checkTokenPresente();
 
 
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -106,7 +105,7 @@ public class Chat extends Activity {
         id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         actived = false;
         displayDescPost();
-
+        checkTokenPresente();
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this, Login.class);
@@ -164,8 +163,10 @@ public class Chat extends Activity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 newPost = dataSnapshot.getValue(NewPost.class);
 
+
+                displayChatMess();
                 if(newPost==null) {
-                    title.setText("POST NON PIU' DISPONIBILE");
+                    title.setText(R.string.postnotavailble);
                     return;
                 }
                 if (newPost.attivo == false) {
@@ -199,7 +200,6 @@ public class Chat extends Activity {
             }
         });
 
-
     }
 
     public void sendMessToServer(View view) {
@@ -211,7 +211,8 @@ public class Chat extends Activity {
             Toast.makeText(this, "Inserisci Messaggio", Toast.LENGTH_SHORT).show();
             return;
         }
-        ChatMess chatMess = new ChatMess(messaggio, FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), key);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        ChatMess chatMess = new ChatMess(messaggio,user.getDisplayName(),user.getUid(), key);
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("chat").push();
         mDatabase.setValue(chatMess);
@@ -254,6 +255,10 @@ public class Chat extends Activity {
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear);
                 linearLayout.removeAllViews();
                 listaMessaggi = collectAllChatMess(dataSnapshot);
+
+                LinearLayout ll = (LinearLayout) findViewById((R.id.linear1));
+
+                ll.setVisibility(View.VISIBLE);
                 /**Log.d("ciao", "siamo seri0.57876" + tokenPresent);
                  pushToken();
                  Log.d("ciao", "siamo seri0.5" + tokenPresent);
@@ -320,8 +325,10 @@ public class Chat extends Activity {
             TextView username = (TextView) this.findViewById(R.id.userName);
 
 
-            String utenteMsg = postattivo.getMessUser();
-            String utenteLoggato = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+            String utenteMsg = postattivo.getUserId();
+            Log.e("UD",utenteMsg);
+            String utenteLoggato = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Log.e("UD",utenteLoggato);
 
             if (utenteMsg.equals(utenteLoggato)) {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);

@@ -64,7 +64,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     private GeoFire geoFire;
     private GeoQuery geoQuery;
 
-    ArrayList<MyMarker> arrayMarker = new ArrayList<MyMarker>();
+    ArrayList<MyMarker> arrayMarker;
 
     GoogleMap mMap;
 
@@ -80,6 +80,8 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
         geoFire = new GeoFire(ref);
         geoQuery = null;
+        arrayMarker = new ArrayList<MyMarker>();
+
 
     }
 

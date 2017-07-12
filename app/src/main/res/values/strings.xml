@@ -4,7 +4,7 @@
     <string name="facebook_app_id">453142495028829</string>
     <string name="fb_login_protocol_scheme">fb453142495028829</string>
     <string name="signed_in_fmt">Signed in as: %s</string>
-    <string name="google_in">Sign in with Google</string>
+    <string name="google_in">Continua con Google</string>
     <string name="title_activity_maps">Map</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -14,12 +14,19 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Impostazioni</string>
 
     <string name="user">Profilo</string>
     <string name="post">Post Attivi</string>
     <string name="mappe">Mappa</string>
     <string name="logout">Logout</string>
+    <string name="comments">Risposte:</string>
+    <string name="submit">Inserisci</string>
+    <string name="delete">elimina</string>
+    <string name="writecomment">Inserisci commento..</string>
+    <string name="title">Titolo</string>
+    <string name="content">Contenuto</string>
+    <string name="postnotavailble">POST NON PIU\' DISPONIBILE</string>
 
 
 </resources>

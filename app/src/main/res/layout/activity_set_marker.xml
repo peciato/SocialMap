@@ -53,7 +53,7 @@
                 android:id="@+id/editText3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Title"
+                android:hint="@string/title"
                 android:inputType="textPersonName"
                 android:textAllCaps="false"
                 android:textColorLink="@android:color/holo_blue_light" />
@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
-                android:hint="Content"
+                android:hint="@string/content"
                 android:inputType="textMultiLine" />
 
         </android.support.v7.widget.CardView>
@@ -98,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="top"
                 android:hint="Minutes"
-                android:inputType="number|time" />
+                android:inputType = "number"/>
 
         </android.support.v7.widget.CardView>
 
@@ -125,7 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="submit"
-                    android:text="Submit" />
+                    android:text="@string/submit" />
             </LinearLayout>
 
             <LinearLayout

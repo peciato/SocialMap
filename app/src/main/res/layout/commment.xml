@@ -31,7 +31,7 @@
             android:layout_weight="0"
             android:gravity="end"
             android:onClick="deleteComment"
-            android:text="delete"
+            android:text="@string/delete"
             android:textColor="#2de8c8"
             android:textSize="10sp" />
 

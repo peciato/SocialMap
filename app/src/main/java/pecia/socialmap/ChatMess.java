@@ -12,11 +12,22 @@ public class ChatMess {
     private String messUser;
     private long messTime;
     private String topic;
+    private String UserId;
 
-    public ChatMess(String messText, String messUser, String topic) {
+    public String getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(String userId) {
+        UserId = userId;
+    }
+
+    public ChatMess(String messText, String messUser, String userId, String topic) {
         this.messText = messText;
         this.messUser = messUser;
         this.topic = topic;
+        this.UserId = userId;
+
         messTime = new Date().getTime();
     }
 
