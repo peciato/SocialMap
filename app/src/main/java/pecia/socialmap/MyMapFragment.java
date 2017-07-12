@@ -53,7 +53,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class MyMapFragment extends MapFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    public static LocationListener locationListener;
+    public static LocationListener locationListener,locationListener1;
     public static LocationManager locationManager;
     private DatabaseReference mDatabase;
     private LatLng latLng;
@@ -134,7 +134,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     //primo Zoom
     private void Zoom() {
         locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+        locationListener1 = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
@@ -169,8 +169,8 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener1);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener1);
 
 
     }
@@ -421,6 +421,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     public void onPause() {
         super.onPause();
         locationManager.removeUpdates(locationListener);
+        locationManager.removeUpdates(locationListener1);
         Log.e("REMOVE","GPS");
         //locationManager=null;
 
