@@ -117,6 +117,7 @@ public class SetMarker extends Activity {
         String post = pos.getText().toString();
         String time = tim.getText().toString();
 
+
         if (titolo.matches("")) {
             Toast.makeText(this, "Inserisci titolo", Toast.LENGTH_SHORT).show();
             return;
@@ -152,6 +153,7 @@ public class SetMarker extends Activity {
         key = newPost.key;
         newPost.durata=Long.parseLong(time, 10);
         newPost.data = new Date().getTime();
+        newPost.attivo = true;
 
 
         if(fotoPresente) {

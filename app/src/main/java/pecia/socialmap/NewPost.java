@@ -22,6 +22,7 @@ public class NewPost{
     public String key;
     public long durata;//espressa in minuti
     public double data;
+    public boolean attivo;
     public Date date;
 
     public NewPost() { // construttore di default richiesto da Firebase

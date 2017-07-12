@@ -79,7 +79,6 @@ public class PostFragment extends Fragment {
                 Log.d("fuori if", "furi if");
                 Log.d("fuori if", id + " " + model.utenteID);
                 if(id.equals(model.utenteID)){
-                    Log.d("fuori if", "dentro if");
                     messText.setTextColor(Color.RED);
                     ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);
                     icona.setVisibility(View.VISIBLE);

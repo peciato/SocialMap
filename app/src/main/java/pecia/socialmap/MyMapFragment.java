@@ -134,7 +134,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     //primo Zoom
     private void Zoom() {
         locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
-        locationListener1 = new LocationListener() {
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
@@ -169,8 +169,8 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener1);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener1);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
 
     }
@@ -181,7 +181,6 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     private void posMarker() {
 
         locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
-
 
         final Activity con = this.getActivity();
         locationListener = new LocationListener() {
@@ -198,13 +197,10 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
 
-
-
                         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
                         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-
 
                                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
 
@@ -254,6 +250,17 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                     @Override
                     public void onKeyExited(String key) {
 
+
+                        int index = arrayMarker.indexOf(new MyMarker(key));
+                        if (index > -1) {
+                            Marker m =  arrayMarker.get(index).getMarker();
+                            m.remove();
+                            arrayMarker.remove(index);
+                        }
+
+
+
+                        /*
                         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
                         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -262,10 +269,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
                                 if (newPost != null) {
 
-                                    int index = arrayMarker.indexOf(new MyMarker(newPost.key));
-                                    Marker m =  arrayMarker.get(index).getMarker();
-                                    m.remove();
-                                    arrayMarker.remove(index);
+
 
 
 
@@ -294,7 +298,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
-
+*/
 
                     }
 
@@ -422,10 +426,6 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         super.onPause();
         locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
-        locationManager.removeUpdates(locationListener1);
-        locationManager = null;
-        Log.e("REMOVE","GPS");
-        //locationManager=null;
 
     }
 
