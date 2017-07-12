@@ -177,9 +177,9 @@ public class Mappa extends AppCompatActivity
         if (id == R.id.nav_map_layout) {
 
             FragmentManager mManager = this.getFragmentManager();
-            Boolean fragmentPopped = mManager.popBackStackImmediate (MyMapFragment.class.getName(), 1);
+            //Boolean fragmentPopped = mManager.popBackStackImmediate (MyMapFragment.class.getName(), 1);
             transaction.replace(R.id.content_frame, mapFrag);
-            transaction.addToBackStack(MyMapFragment.class.getName());
+            //transaction.addToBackStack(MyMapFragment.class.getName());
             transaction.commit();
             fab.setVisibility(View.VISIBLE);
 
@@ -189,12 +189,12 @@ public class Mappa extends AppCompatActivity
 
             FragmentManager mManager = this.getFragmentManager();
 
-            Boolean fragmentPopped = mManager.popBackStackImmediate (UserFragment.class.getName(), 1);
+            //Boolean fragmentPopped = mManager.popBackStackImmediate (UserFragment.class.getName(), 1);
 
             userFragment = new UserFragment();
 
             transaction.replace(R.id.content_frame, userFragment);
-            transaction.addToBackStack(UserFragment.class.getName());
+            //transaction.addToBackStack(UserFragment.class.getName());
             transaction.commit();
             fab.setVisibility(View.GONE);
 
@@ -209,7 +209,7 @@ public class Mappa extends AppCompatActivity
             postFragment = new PostFragment();
 
             transaction.replace(R.id.content_frame, postFragment);
-            transaction.addToBackStack(PostFragment.class.getName());
+            //transaction.addToBackStack(PostFragment.class.getName());
             transaction.commit();
             fab.setVisibility(View.GONE);
 

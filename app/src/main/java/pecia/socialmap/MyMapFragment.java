@@ -421,6 +421,9 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     public void onPause() {
         super.onPause();
         locationManager.removeUpdates(locationListener);
+        Log.e("REMOVE","GPS");
+        //locationManager=null;
+
     }
 
     /*
