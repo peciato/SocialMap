@@ -26,13 +26,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.ArrayList;
 
 
 public class Mappa extends AppCompatActivity
@@ -89,7 +97,7 @@ public class Mappa extends AppCompatActivity
 
         imgProfilePic = (ImageView) this.findViewById(R.id.profile_user);
 
-
+        controlloKeyUtente();
 
         //aggiungo mapfragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -99,6 +107,8 @@ public class Mappa extends AppCompatActivity
         transaction.commit();
 
         navigationView.setCheckedItem(R.id.nav_map_layout);
+
+
 
     }
 
@@ -126,6 +136,7 @@ public class Mappa extends AppCompatActivity
     }
 
     public void logOut(View view){
+        cancelloKeyAttuale();
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         Intent intent = new Intent(this, Login.class);
@@ -224,12 +235,106 @@ public class Mappa extends AppCompatActivity
 
 
 
+    public void controlloKeyUtente(){
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference ciao = ref.child("users");
+        final DatabaseReference ciao0 = ref.child("listaUtenti");
+        final DatabaseReference si = ciao0.push();
+        final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        ciao0.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean presente = false;
+
+                //SE ESISTONO UTENTI NEL DATABASE
+                if(snapshot.exists()) {
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                        UserKey utente = postSnapshot.getValue(UserKey.class);
+                        Log.d("qualcuno esiste", "user " + utente.userName);
+                        //SE L'UTENTE IN QUESTIONE ESISTE GIA (E GIA LOGGATO IN QUELCHE TELEFONO) AGGIUNGO LA SUA KEY ALLE ALTRE SUE NEL CASO SIA DIVERSA
+                        if (utente.userName.equals(userId)) {
+                            Log.d("qualcuno esiste", "esiste gia!!! " + utente.userName);
+                            if(!utente.key.contains(FirebaseInstanceId.getInstance().getToken())){
+                                Log.d("qualcuno esiste", "esiste non la chiave però!!! " + utente.userName);
+                                utente.key.add(FirebaseInstanceId.getInstance().getToken());
+                                postSnapshot.getRef().removeValue();
+                                si.setValue(utente);
+
+                            }
+                            presente = true;
+                        }
+                    }
+                    //SE L'UTENTE NON E LOGGATO DA NESSUNA PARTE LO AGGIUNGO AGLI UTENTI LOGGATI
+                    if(presente == false){
+                        UserKey user = new UserKey(userId, FirebaseInstanceId.getInstance().getToken());
+                        si.setValue(user);
+                    }
+                }
+                //SE NON ESISTONO UTENTI NEL DATABASE
+                else {
+                    //ArrayList<String> key = new ArrayList<String>();
+                    //key.add(FirebaseInstanceId.getInstance().getToken());
+                    Log.d("bubu", "NON EISTE NESSUNO");
+                    DatabaseReference si = ciao0.push();
+                    UserKey user = new UserKey(userId, FirebaseInstanceId.getInstance().getToken());
+                    si.setValue(user);
+                    //DatabaseReference ciao2 = ciao.child()
+                    //ciao.child("users").child(user).child("keys").push();
+                    //ciao.setValue(key);
 
 
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+    }
 
+    public void cancelloKeyAttuale(){
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference ciao0 = ref.child("listaUtenti");
+        final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        ciao0.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
 
+                //SE ESISTONO UTENTI NEL DATABASE
+                if(snapshot.exists()) {
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                        UserKey utente = postSnapshot.getValue(UserKey.class);
+                        Log.d("eliminazione", "user " + utente.userName);
+                        //L'UTENTE IN QUESTIONE ESISTE
+                        if (utente.userName.equals(userId)) {
+                            if(utente.key.contains(FirebaseInstanceId.getInstance().getToken())){
+                                if(utente.key.size() == 1){
+                                    postSnapshot.getRef().removeValue();
+                                }
+                                else {
+                                    utente.key.remove(utente.key.indexOf(FirebaseInstanceId.getInstance().getToken()));
+                                    postSnapshot.getRef().removeValue();
+                                    DatabaseReference si = ciao0.push();
+                                    si.setValue(utente);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }
+
+
 

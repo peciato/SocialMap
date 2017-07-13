@@ -49,7 +49,7 @@ public class Chat extends Activity {
     private NewPost postattivo;
     private NewPost newPost;
     private boolean tokenPresent = false;
-    private String tokenAttuale = FirebaseInstanceId.getInstance().getToken();
+    private String tokenAttuale = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private ArrayList<ChatMess> listaMessaggi;
 
 
@@ -114,7 +114,6 @@ public class Chat extends Activity {
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
 
@@ -248,6 +247,8 @@ public class Chat extends Activity {
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             public ArrayList<String> Userlist;
+
+
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

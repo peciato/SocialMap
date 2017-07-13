@@ -191,7 +191,7 @@ public class SetMarker extends Activity {
         geoFire.setLocation(newPost.key , new GeoLocation(newPost.lat,newPost.longi) );
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
-        String token = FirebaseInstanceId.getInstance().getToken();
+        String token = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDatabase.setValue(token.toString());
 
 
