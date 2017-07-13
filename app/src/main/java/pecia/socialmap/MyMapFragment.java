@@ -194,7 +194,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                 }
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) con.getApplication()).setLatLng(latLng);
-                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  1.5);
+                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  100);
                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
