@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -53,16 +53,17 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class MyMapFragment extends MapFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    public static LocationListener locationListener,locationListener1;
+    public static LocationListener locationListener, locationListener1;
     public static LocationManager locationManager;
     private DatabaseReference mDatabase;
     private LatLng latLng;
     GoogleApiClient mGoogleApiClient;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private BitmapDescriptor icon ;
+    private BitmapDescriptor icon;
     private DatabaseReference ref;
     private GeoFire geoFire;
     private GeoQuery geoQuery;
+    private boolean ready;
 
     ArrayList<MyMarker> arrayMarker;
 
@@ -76,14 +77,32 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name);
-        getMaps();
+        ready = false;
         ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
         geoFire = new GeoFire(ref);
         geoQuery = null;
         arrayMarker = new ArrayList<MyMarker>();
-
+        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
 
     }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getMaps();
+
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(locationListener);
+        ready = false;
+    }
+
 
     public void getMaps() {
         super.getMapAsync(this);
@@ -91,34 +110,39 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        if (ready == false) {
+            ready = true;
 
-        //Listener per quando un marker è cliccato
-        mMap.setOnInfoWindowClickListener(getInfoWindowClickListener());
+            mMap = googleMap;
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+            //Listener per quando un marker è cliccato
+            mMap.setOnInfoWindowClickListener(getInfoWindowClickListener());
 
 
-        //Initialize Google Play Services
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this.getActivity(),
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //Location Permission already granted
+            //Initialize Google Play Services
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(this.getActivity(),
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    //Location Permission already granted
+                    buildGoogleApiClient();
+                    mMap.setMyLocationEnabled(true);
+                } else {
+                    //Request Location Permission
+                    checkLocationPermission();
+                }
+            } else {
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
-            } else {
-                //Request Location Permission
-                checkLocationPermission();
             }
-        } else {
-            buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
+
+
+            Zoom();
+            //Gestisce posizionamento Marker
+            posMarker();
+
+
         }
-
-        Zoom();
-        //Gestisce posizionamento Marker
-        posMarker();
-
-
     }
 
 
@@ -135,8 +159,9 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
     //primo Zoom
     private void Zoom() {
-        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+
+        locationListener1 = new LocationListener() {
+
             @Override
             public void onLocationChanged(Location location) {
                 LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
@@ -162,39 +187,32 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         };
         if (ActivityCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+
+
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener1);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener1);
 
 
     }
 
 
-
     //Posiziona marker
     private void posMarker() {
-
-        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
 
         final Activity con = this.getActivity();
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
 
-                if(geoQuery != null) {
+
+                if (geoQuery != null) {
                     geoQuery.removeAllListeners();
                 }
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) con.getApplication()).setLatLng(latLng);
-                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude,latLng.longitude),  100);
+                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), 100);
                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
@@ -207,20 +225,18 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                                 NewPost newPost = dataSnapshot.getValue(NewPost.class);
 
                                 //se gia c'è questo marker controlla la durata ed esce
-                                if (arrayMarker.indexOf(new MyMarker(key)) != -1 ) {
+                                if (arrayMarker.indexOf(new MyMarker(key)) != -1) {
 
-                                    if (newPost!=null) {
-                                        if ((new Date().getTime() - newPost.data) > TimeUnit.MINUTES.toMillis(newPost.durata))
-                                        {
+                                    if (newPost != null) {
+                                        if ((new Date().getTime() - newPost.data) > TimeUnit.MINUTES.toMillis(newPost.durata)) {
                                             int index = arrayMarker.indexOf(new MyMarker(newPost.key));
-                                            Marker m =  arrayMarker.get(index).getMarker();
+                                            Marker m = arrayMarker.get(index).getMarker();
                                             m.remove();
                                             arrayMarker.remove(index);
                                         }
                                     }
                                     return;
-                                }
-                                else {
+                                } else {
 
                                     if (newPost != null) {
 
@@ -255,52 +271,10 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
                         int index = arrayMarker.indexOf(new MyMarker(key));
                         if (index > -1) {
-                            Marker m =  arrayMarker.get(index).getMarker();
+                            Marker m = arrayMarker.get(index).getMarker();
                             m.remove();
                             arrayMarker.remove(index);
                         }
-
-
-
-                        /*
-                        mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
-                        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                NewPost newPost = dataSnapshot.getValue(NewPost.class);
-                                if (newPost != null) {
-
-
-
-
-
-                                    //Rimozione da post
-                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                                    Query applesQuery = ref.child("posts").orderByChild("key").equalTo(newPost.key);
-
-                                    applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                                                appleSnapshot.getRef().removeValue();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-*/
 
                     }
 
@@ -348,22 +322,18 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
 
-
-
     }
 
 
-    public GoogleMap.OnInfoWindowClickListener getInfoWindowClickListener()
-    {
-        return new GoogleMap.OnInfoWindowClickListener()
-        {
+    public GoogleMap.OnInfoWindowClickListener getInfoWindowClickListener() {
+        return new GoogleMap.OnInfoWindowClickListener() {
             @Override
-            public void onInfoWindowClick(Marker marker)
-            {
+            public void onInfoWindowClick(Marker marker) {
                 sendMess(marker);
             }
         };
     }
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this.getActivity())
                 .addConnectionCallbacks(this)
@@ -423,26 +393,5 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
-        locationManager.removeUpdates(locationListener);
 
-    }
-
-    /*
-    @Override
-    public void onResume() {
-
-        super.onResume();
-
-        if (ActivityCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-    }*/
 }
