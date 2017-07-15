@@ -76,8 +76,6 @@ public class PostFragment extends Fragment {
                 messText = (TextView) v.findViewById(R.id.message_text);
                 messTime = (TextView) v.findViewById(R.id.message_time);
                 messUser = (TextView) v.findViewById(R.id.message_user);
-                Log.d("fuori if", "furi if");
-                Log.d("fuori if", id + " " + model.utenteID);
                 if(id.equals(model.utenteID)){
                     messText.setTextColor(Color.RED);
                     ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);

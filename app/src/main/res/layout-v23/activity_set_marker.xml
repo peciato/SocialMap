@@ -121,7 +121,7 @@
 
                 <Button
                     android:id="@+id/button7"
-                    style="@android:style/Widget.Holo.Button"
+                    style="@android:style/Widget.Material.Button.Colored"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="submit"
@@ -138,7 +138,7 @@
                     android:id="@+id/pict"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
+                    android:onClick="takePhoto"
                     android:layout_gravity="center"
                     app:backgroundTint="#2de8c8"
                     app:elevation="6dp"

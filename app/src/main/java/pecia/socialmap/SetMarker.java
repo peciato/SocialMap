@@ -60,8 +60,7 @@ public class SetMarker extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_marker);
-        //this.getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
-        //setWindowParams();
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 ) {
             ActivityCompat.requestPermissions(this,
@@ -70,13 +69,6 @@ public class SetMarker extends Activity {
 
         }
 
-        fab = (FloatingActionButton) findViewById(R.id.pict);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                takePhoto();
-            }
-        });
 
         mImageView = (ImageView) findViewById(R.id.photo);
         mImageView.setVisibility(View.GONE);
@@ -130,6 +122,16 @@ public class SetMarker extends Activity {
 
         if (time.matches("")) {
             Toast.makeText(this, "Inserisci minuti", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (Integer.valueOf(time)>60 ) {
+            Toast.makeText(this, "Durata massima 60 minuti!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (Integer.valueOf(time)<1  ) {
+            Toast.makeText(this, "Durata minima 1 minuto!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -198,7 +200,7 @@ public class SetMarker extends Activity {
         this.finish();
     }
 
-    public void takePhoto() {
+    public void takePhoto(View view) {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                ) {

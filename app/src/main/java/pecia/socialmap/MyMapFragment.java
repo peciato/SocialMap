@@ -10,12 +10,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -85,7 +85,6 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
 
     }
-
 
 
     @Override
@@ -160,10 +159,13 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     //primo Zoom
     private void Zoom() {
 
+        Log.e("ENTRI?","ENTRI");
+        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
         locationListener1 = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
+                Log.e("ZOOM","ZOOM");
                 LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latilong, 15));
                 locationManager.removeUpdates(this);
@@ -185,15 +187,17 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
 
             }
         };
+
         if (ActivityCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener1);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener1);
-
+        Log.e("ZOOM","ZOOM!");
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 2, locationListener1);
+        Log.e("ZOOM","ZOOM!");
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, locationListener1);
+        Log.e("ZOOM","ZOOM!");
 
     }
 
@@ -212,7 +216,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
                 }
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 ((MyApplication) con.getApplication()).setLatLng(latLng);
-                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), 100);
+                geoQuery = geoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), 5);
                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                     @Override
                     public void onKeyEntered(final String key, GeoLocation location) {
@@ -318,8 +322,8 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
             return;
         }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 2, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, locationListener);
 
 
     }
