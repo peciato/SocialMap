@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,6 +51,8 @@ public class PostFragment extends Fragment {
     public void onStart() {
         super.onStart();
         idU = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ImageView iconaMessDaLeggere = (ImageView) getActivity().findViewById(R.id.notificaMess);
+        iconaMessDaLeggere.setVisibility(View.GONE);
         displayChatMess();
 
     }
@@ -77,14 +80,16 @@ public class PostFragment extends Fragment {
                 messTime = (TextView) v.findViewById(R.id.message_time);
                 messUser = (TextView) v.findViewById(R.id.message_user);
                 if(idU.equals(model.utenteID)){
-                    messText.setTextColor(Color.RED);
                     ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);
                     icona.setVisibility(View.VISIBLE);
+                    LinearLayout margine = (LinearLayout) v.findViewById(R.id.stufo);
+                    margine.setPadding(35,0,0,0);
                 }
                 else{
-                    messText.setTextColor(Color.BLUE);
                     ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);
                     icona.setVisibility(View.GONE);
+                    LinearLayout margine = (LinearLayout) v.findViewById(R.id.stufo);
+                    margine.setPadding(0,0,0,0);
                 }
                 messText.setText(model.messaggio);
                 messUser.setText(model.titolo);

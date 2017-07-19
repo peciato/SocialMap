@@ -20,6 +20,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <ImageView
+        android:id="@+id/notificaMess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        android:tint="#2de8c8"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_chat" />
+
     <include layout="@layout/content_main3" />
 
 </android.support.design.widget.CoordinatorLayout>

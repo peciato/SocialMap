@@ -74,8 +74,10 @@ public class Mappa extends AppCompatActivity
             }
         });
 
-        Intent intent = new Intent(this, FirebaseIDService.class);
-        startService(intent);
+        //Intent intent = new Intent(this, FirebaseIDService.class);
+        //startService(intent);
+        //Intent intent2 = new Intent(this, MyFirebaseMessagingService.class);
+        //startService(intent2);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
