@@ -77,7 +77,7 @@
             android:name=".Chat"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.no"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Image_Activity"
             android:screenOrientation="portrait" />

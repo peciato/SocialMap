@@ -188,7 +188,24 @@ public class Chat extends Activity {
 
                 if (newPost.utenteID.equals(id)) {
                     ImageButton deleteButton = (ImageButton) findViewById(R.id.deletebutton);
-                    deleteButton.setVisibility(View.VISIBLE);
+                    //deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            // Code here executes on main thread after user presses button
+                            deletePost();
+                        }
+                    });
+
+                }
+                else{
+                    ImageButton deleteButton = (ImageButton) findViewById(R.id.deletebutton);
+                    //deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            // Code here executes on main thread after user presses button
+                            deletePostNotMine();
+                        }
+                    });
                 }
 
             }
@@ -334,9 +351,23 @@ public class Chat extends Activity {
             if (utenteMsg.equals(utenteLoggato)) {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
                 delComment.setVisibility(View.VISIBLE);
+                /**delComment.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        // Code here executes on main thread after user presses button
+                        deletePost();
+                    }
+                });**/
+
             } else {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
                 delComment.setVisibility(View.GONE);
+                /**delComment.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        // Code here executes on main thread after user presses button
+                        deletePostNotMine();
+                    }
+                });**/
+
             }
 
             /**if(username.getText().equals(utenteMsg)){
@@ -413,7 +444,7 @@ public class Chat extends Activity {
 
     }
 
-    public void deletePost(View view) {
+    public void deletePost() {
 
         if (newPost != null) {
 

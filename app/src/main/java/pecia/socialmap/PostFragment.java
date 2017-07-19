@@ -35,7 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 public class PostFragment extends Fragment {
 
     View myView;
-    private String id;
+    private String idU;
 
 
     @Nullable
@@ -49,7 +49,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        idU = FirebaseAuth.getInstance().getCurrentUser().getUid();
         displayChatMess();
 
     }
@@ -62,7 +62,7 @@ public class PostFragment extends Fragment {
 
     private void displayChatMess() {
 
-        String id2 = id;
+        String id2 = idU;
 
         ListView listView = (ListView) getActivity().findViewById(R.id.list_of_post);
         ListAdapter adapter = new FirebaseListAdapter<NewPost>(getActivity(),NewPost.class,R.layout.list_item,
@@ -76,7 +76,7 @@ public class PostFragment extends Fragment {
                 messText = (TextView) v.findViewById(R.id.message_text);
                 messTime = (TextView) v.findViewById(R.id.message_time);
                 messUser = (TextView) v.findViewById(R.id.message_user);
-                if(id.equals(model.utenteID)){
+                if(idU.equals(model.utenteID)){
                     messText.setTextColor(Color.RED);
                     ImageView icona = (ImageView) v.findViewById(R.id.imageViewMio);
                     icona.setVisibility(View.VISIBLE);
@@ -89,7 +89,16 @@ public class PostFragment extends Fragment {
                 messText.setText(model.messaggio);
                 messUser.setText(model.titolo);
                 messTime.setText(model.utente);
-
+                if(model.daLeggere.equals("true") ){
+                    TextView mess;
+                    mess = (TextView) v.findViewById(R.id.textView2);
+                    mess.setVisibility(View.VISIBLE);
+                }
+                else{
+                    TextView mess;
+                    mess = (TextView) v.findViewById(R.id.textView2);
+                    mess.setVisibility(View.GONE);
+                }
 
 
 
@@ -101,8 +110,31 @@ public class PostFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                NewPost post =  (NewPost) parent.getItemAtPosition(position);
+                final NewPost post =  (NewPost) parent.getItemAtPosition(position);
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("postattivi").child(idU);
+                // Attach a listener to read the data at our posts reference
+                db.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            NewPost postI = postSnapshot.getValue(NewPost.class);
+                            Log.d("porco", "dio "+postI.key +" e la madonna "+post.key);
+                            if(postI.key.equals(post.key)) {
+                                if(postI.daLeggere.equals("true")){
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("postattivi").child(idU).child(postSnapshot.getKey()).child("daLeggere");
+                                    ref.setValue("false");
+                                }
+                            }
+                        }
+                        //NewPost post = dataSnapshot.getValue(NewPost.class);
+                        //System.out.println(post);
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        System.out.println("The read failed: " + databaseError.getCode());
+                    }
+                });
                 Intent intent = new Intent(getActivity(), Chat.class);
                 intent.putExtra("keyPost", post.key);
                 startActivity(intent);

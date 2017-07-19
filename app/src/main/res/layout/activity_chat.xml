@@ -6,16 +6,17 @@
     android:id="@+id/linear1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="#4f4f55"
     android:orientation="vertical"
-    android:weightSum="1"
     android:visibility="gone"
+    android:weightSum="1"
     tools:context="pecia.socialmap.Chat">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
         android:layout_weight="1"
         android:alpha="1"
         android:background="#ffffff"
@@ -36,15 +37,14 @@
 
             <ImageButton
                 android:id="@+id/deletebutton"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="end"
                 android:layout_margin="2dp"
                 android:background="#4f4f55"
-                android:onClick="deletePost"
                 android:scaleType="centerCrop"
                 android:src="@drawable/delete1"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/mainLinear"
@@ -80,7 +80,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="7dp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="7dp"
@@ -93,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    card_view:cardCornerRadius="5dp"
+                    card_view:cardCornerRadius="10dp"
                     card_view:cardElevation="10dp">
 
                     <LinearLayout
@@ -166,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="2dp"
-                    card_view:cardCornerRadius="5dp"
+                    card_view:cardCornerRadius="10dp"
                     card_view:cardElevation="10dp">
 
                     <LinearLayout
@@ -217,7 +216,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
             android:background="#e70f0f"
             android:backgroundTint="#e70f0f"
             card_view:cardBackgroundColor="#e70f0f"

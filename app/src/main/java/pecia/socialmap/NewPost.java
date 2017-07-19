@@ -24,7 +24,7 @@ public class NewPost{
     public double data;
     public boolean attivo;
     public Date date;
-
+    public String daLeggere;
     public NewPost() { // construttore di default richiesto da Firebase
     }
 
@@ -35,6 +35,7 @@ public class NewPost{
         this.utente = utente;
         this.utenteID = utenteID;
         this.key = key;
+        this.daLeggere = "false";
 
     }
 

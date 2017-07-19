@@ -122,8 +122,9 @@
                 <Button
                     android:id="@+id/button7"
                     style="@android:style/Widget.Holo.Button"
-                    android:layout_width="match_parent"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:onClick="submit"
                     android:text="@string/submit" />
             </LinearLayout>
