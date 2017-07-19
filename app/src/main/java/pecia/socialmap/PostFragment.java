@@ -118,7 +118,6 @@ public class PostFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             NewPost postI = postSnapshot.getValue(NewPost.class);
-                            Log.d("porco", "dio "+postI.key +" e la madonna "+post.key);
                             if(postI.key.equals(post.key)) {
                                 if(postI.daLeggere.equals("true")){
                                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("postattivi").child(idU).child(postSnapshot.getKey()).child("daLeggere");
