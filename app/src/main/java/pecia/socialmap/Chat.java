@@ -1,7 +1,10 @@
 package pecia.socialmap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -188,7 +191,7 @@ public class Chat extends Activity {
 
                 if (newPost.utenteID.equals(id)) {
                     ImageButton deleteButton = (ImageButton) findViewById(R.id.deletebutton);
-                    //deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setVisibility(View.VISIBLE);
                     deleteButton.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             // Code here executes on main thread after user presses button
@@ -344,38 +347,18 @@ public class Chat extends Activity {
 
 
             String utenteMsg = postattivo.getUserId();
-            Log.e("UD",utenteMsg);
             String utenteLoggato = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Log.e("UD",utenteLoggato);
 
             if (utenteMsg.equals(utenteLoggato)) {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
                 delComment.setVisibility(View.VISIBLE);
-                /**delComment.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        // Code here executes on main thread after user presses button
-                        deletePost();
-                    }
-                });**/
+
 
             } else {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
                 delComment.setVisibility(View.GONE);
-                /**delComment.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        // Code here executes on main thread after user presses button
-                        deletePostNotMine();
-                    }
-                });**/
 
             }
-
-            /**if(username.getText().equals(utenteMsg)){
-             messUser.setTypeface(null, Typeface.BOLD);
-             }
-             else{
-             messUser.setTypeface(null, Typeface.NORMAL);
-             }**/
 
             messText.setText(postattivo.getMessText());
             messUser.setText(postattivo.getMessUser());
@@ -397,23 +380,41 @@ public class Chat extends Activity {
 
     public void deletePostNotMine() {
 
-        //Rimozione da postattivi
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        Query applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(newPost.key);
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    appleSnapshot.getRef().removeValue();
-                }
-            }
+        final Activity x = this;
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        builder.setTitle("Abbandona")
+                .setMessage("Sei sicuro di voler abbandonare la conversazione?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Rimozione da postattivi
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        Query applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(newPost.key);
+                        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                                    appleSnapshot.getRef().removeValue();
+                                }
+                            }
 
-            }
-        });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
+                            }
+                        });
+                        x.finish();
+                    }
+
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     public void deleteComment(View view) {
@@ -423,7 +424,7 @@ public class Chat extends Activity {
         if (mess == null) return;
         if (newPost != null) {
 
-            //Rimozione da postattivi
+            //Rimozione
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             Query applesQuery = ref.child("posts").child(newPost.key).child("chat").orderByChild("messTime").equalTo(mess.getMessTime());
             applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -446,61 +447,65 @@ public class Chat extends Activity {
 
     public void deletePost() {
 
-        if (newPost != null) {
+        final Activity x = this;
+
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+
+        builder.setTitle("Elimina post")
+                .setMessage("Sei sicuro di voler eliminare il post?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (newPost != null) {
 
 
-            //rimozione da geofire
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
-            GeoFire geoFire = new GeoFire(ref);
-            geoFire.removeLocation(newPost.key);
+                            //rimozione da geofire
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
+                            GeoFire geoFire = new GeoFire(ref);
+                            geoFire.removeLocation(newPost.key);
 
-            //Rimozione da postattivi
-             ref = FirebaseDatabase.getInstance().getReference();
-            Query applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(newPost.key);
-            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                        appleSnapshot.getRef().removeValue();
+                            //Rimozione da postattivi
+                            ref = FirebaseDatabase.getInstance().getReference();
+                            Query applesQuery = ref.child("postattivi").child(id).orderByChild("key").equalTo(newPost.key);
+                            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                                        appleSnapshot.getRef().removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+                            ref = FirebaseDatabase.getInstance().getReference().child("posts").child(newPost.key).child("attivo");
+                            ref.setValue(false);
+
+
+                            x.finish();
+                        }
                     }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
-            ref = FirebaseDatabase.getInstance().getReference().child("posts").child(newPost.key).child("attivo");
-            ref.setValue(false);
-
-
-            /*
-            //Rimozione da post
-            ref = FirebaseDatabase.getInstance().getReference();
-            applesQuery = ref.child("posts").orderByChild("key").equalTo(newPost.key);
-
-            applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                        appleSnapshot.getRef().removeValue();
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
                     }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-
-            });
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
 
 
-        */
 
-        this.finish();
-    }
+
+
+
+
+
+
 }
 
 
