@@ -82,7 +82,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
         geoFire = new GeoFire(ref);
         geoQuery = null;
         arrayMarker = new ArrayList<MyMarker>();
-        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager)this.getActivity().getSystemService(LOCATION_SERVICE);
 
     }
 
@@ -160,7 +160,7 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     private void Zoom() {
 
         Log.e("ENTRI?","ENTRI");
-        locationManager = (LocationManager) this.getContext().getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
         locationListener1 = new LocationListener() {
 
             @Override
