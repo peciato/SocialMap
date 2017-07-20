@@ -47,7 +47,7 @@ import static android.content.ContentValues.TAG;
 public class SetMarker extends Activity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    Boolean fotoPresente = false;
+    Boolean fotoPresente;
     FloatingActionButton fab;
     ImageView mImageView;
     private String key;
@@ -58,6 +58,7 @@ public class SetMarker extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        fotoPresente = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_marker);
 
@@ -207,7 +208,6 @@ public class SetMarker extends Activity {
             return;
         }
 
-
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -217,14 +217,14 @@ public class SetMarker extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.e("PHOTO","OK");
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
             mImageView.setImageBitmap(imageBitmap);
             mImageView.setVisibility(View.VISIBLE);
             fotoPresente = true;
 
-
         }
+
     }
 }
