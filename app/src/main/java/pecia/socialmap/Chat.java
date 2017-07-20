@@ -128,7 +128,9 @@ public class Chat extends Activity {
 
                     postattivo = postSnapshot.getValue(NewPost.class);
 
-                    if (postattivo.key.equals(key)) {
+
+
+                    if (postattivo.key != null && postattivo.key.equals(key)) {
 
                         actived = true;
 
@@ -243,6 +245,7 @@ public class Chat extends Activity {
         if (!actived && id != null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id).push();
             mDatabase.setValue(newPost);
+            actived = true;
         }
         //FirebaseMessaging.getInstance().;
         if (tokenPresent != true) {
