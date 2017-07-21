@@ -44,7 +44,7 @@
                 android:background="#4f4f55"
                 android:scaleType="centerCrop"
                 android:src="@drawable/delete1"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/mainLinear"

@@ -168,11 +168,12 @@ public class Chat extends Activity {
                 newPost = dataSnapshot.getValue(NewPost.class);
 
 
-                displayChatMess();
+
                 if(newPost==null) {
                     title.setText(R.string.postnotavailble);
                     return;
                 }
+                displayChatMess();
                 if (newPost.attivo == false) {
                     view.setVisibility(View.INVISIBLE);
                 }
@@ -283,14 +284,6 @@ public class Chat extends Activity {
                 LinearLayout ll = (LinearLayout) findViewById((R.id.linear1));
 
                 ll.setVisibility(View.VISIBLE);
-                /**Log.d("ciao", "siamo seri0.57876" + tokenPresent);
-                 pushToken();
-                 Log.d("ciao", "siamo seri0.5" + tokenPresent);
-                 if(tokenPresent == false){
-                 mDatabaseToken = FirebaseDatabase.getInstance().getReference().child("posts").child(key).child("token").push();
-                 Log.d("ciao", "siamo seri" + tokenPresent );
-                 mDatabaseToken.setValue(tokenAttuale);
-                 }**/
             }
 
             @Override
@@ -308,15 +301,10 @@ public class Chat extends Activity {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("ciao", "siamo seri5");
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Log.d("ciao", "siamo seri3");
                     String token = postSnapshot.getValue(String.class);
-                    Log.d("ciao", "siamo seri13.5" + token.toString() + "::::" + tokenAttuale);
                     if (token.toString().equals(tokenAttuale)) {
-                        Log.d("ciao", "siamo seri1");
                         tokenPresent = true;
-                        Log.d("ciao", "siamo seri1.5" + tokenPresent);
                     }
                 }
             }
@@ -352,10 +340,12 @@ public class Chat extends Activity {
             String utenteMsg = postattivo.getUserId();
             String utenteLoggato = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+
             if (utenteMsg.equals(utenteLoggato)) {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
                 delComment.setVisibility(View.VISIBLE);
-
+                ImageButton deleteButton = (ImageButton) findViewById(R.id.deletebutton);
+                deleteButton.setVisibility(View.VISIBLE);
 
             } else {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
@@ -387,7 +377,7 @@ public class Chat extends Activity {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
 
-        builder.setTitle("Abbandona")
+        builder.setTitle(R.string.abbandone)
                 .setMessage("Sei sicuro di voler abbandonare la conversazione?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

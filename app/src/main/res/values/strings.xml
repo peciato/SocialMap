@@ -27,6 +27,7 @@
     <string name="title">Titolo</string>
     <string name="content">Contenuto</string>
     <string name="postnotavailble">POST NON PIU\' DISPONIBILE</string>
+    <string name="abbandone">Abbandona</string>
 
 
 </resources>
