@@ -120,7 +120,7 @@ public class Chat extends Activity {
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("postattivi").child(id);
 
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
@@ -133,6 +133,8 @@ public class Chat extends Activity {
                     if (postattivo.key != null && postattivo.key.equals(key)) {
 
                         actived = true;
+                        ImageView deleteButton = (ImageView) findViewById(R.id.deletebutton);
+                        deleteButton.setVisibility(View.VISIBLE);
 
                         break;
                     }
@@ -344,8 +346,6 @@ public class Chat extends Activity {
             if (utenteMsg.equals(utenteLoggato)) {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
                 delComment.setVisibility(View.VISIBLE);
-                ImageButton deleteButton = (ImageButton) findViewById(R.id.deletebutton);
-                deleteButton.setVisibility(View.VISIBLE);
 
             } else {
                 TextView delComment = (TextView) v.findViewById(R.id.deletePostV);
