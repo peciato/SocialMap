@@ -388,6 +388,24 @@ public class Chat extends Activity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child(key);
+                                    mDatabase.child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                                String token = postSnapshot.getValue(String.class);
+                                                if (token.toString().equals(tokenAttuale)) {
+                                                    postSnapshot.getRef().removeValue();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError firebaseError) {
+                                            //Username Does Not Exist
+                                        }
+                                    });
                                     appleSnapshot.getRef().removeValue();
                                 }
                             }
