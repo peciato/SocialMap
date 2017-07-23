@@ -16,7 +16,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -64,7 +63,6 @@ public class Mappa extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d("bubu", "Refreshed token: " + refreshedToken);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +92,6 @@ public class Mappa extends AppCompatActivity
             navigationView.setItemTextColor(ColorStateList.createFromXml(res,res.getXml(R.color.color_menu)));
             navigationView.setItemIconTintList(ColorStateList.createFromXml(res,res.getXml(R.color.color_menu)));
         } catch (Exception ex) {
-            Log.e("Error", "Exception loading drawable");
         }
 
         imgProfilePic = (ImageView) this.findViewById(R.id.profile_user);
@@ -255,12 +252,9 @@ public class Mappa extends AppCompatActivity
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
 
                         UserKey utente = postSnapshot.getValue(UserKey.class);
-                        Log.d("qualcuno esiste", "user " + utente.userName);
                         //SE L'UTENTE IN QUESTIONE ESISTE GIA (E GIA LOGGATO IN QUELCHE TELEFONO) AGGIUNGO LA SUA KEY ALLE ALTRE SUE NEL CASO SIA DIVERSA
                         if (utente.userName.equals(userId)) {
-                            Log.d("qualcuno esiste", "esiste gia!!! " + utente.userName);
                             if(!utente.key.contains(FirebaseInstanceId.getInstance().getToken())){
-                                Log.d("qualcuno esiste", "esiste non la chiave però!!! " + utente.userName);
                                 utente.key.add(FirebaseInstanceId.getInstance().getToken());
                                 postSnapshot.getRef().removeValue();
                                 si.setValue(utente);
@@ -279,7 +273,6 @@ public class Mappa extends AppCompatActivity
                 else {
                     //ArrayList<String> key = new ArrayList<String>();
                     //key.add(FirebaseInstanceId.getInstance().getToken());
-                    Log.d("bubu", "NON EISTE NESSUNO");
                     DatabaseReference si = ciao0.push();
                     UserKey user = new UserKey(userId, FirebaseInstanceId.getInstance().getToken());
                     si.setValue(user);
@@ -311,7 +304,6 @@ public class Mappa extends AppCompatActivity
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
 
                         UserKey utente = postSnapshot.getValue(UserKey.class);
-                        Log.d("eliminazione", "user " + utente.userName);
                         //L'UTENTE IN QUESTIONE ESISTE
                         if (utente.userName.equals(userId)) {
                             if(utente.key.contains(FirebaseInstanceId.getInstance().getToken())){

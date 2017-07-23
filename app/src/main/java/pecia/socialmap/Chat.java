@@ -2,24 +2,21 @@ package pecia.socialmap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.text.format.DateFormat;
 import android.widget.Toast;
@@ -28,8 +25,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.firebase.geofire.GeoFire;
-import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -76,6 +71,10 @@ public class Chat extends Activity {
 
 
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
 
 
@@ -262,6 +261,30 @@ public class Chat extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        final String idU = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("postattivi").child(idU);
+        // Attach a listener to read the data at our posts reference
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    NewPost postI = postSnapshot.getValue(NewPost.class);
+                    if(postattivo != null && postI.key.equals(postattivo.key)) {
+                        if(postI.daLeggere.equals("true")){
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("postattivi").child(idU).child(postSnapshot.getKey()).child("daLeggere");
+                            ref.setValue("false");
+                        }
+                    }
+                }
+                //NewPost post = dataSnapshot.getValue(NewPost.class);
+                //System.out.println(post);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
         this.finish();
     }
 

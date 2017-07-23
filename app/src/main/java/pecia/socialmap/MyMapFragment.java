@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -159,13 +158,11 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
     //primo Zoom
     private void Zoom() {
 
-        Log.e("ENTRI?","ENTRI");
         locationManager = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
         locationListener1 = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
-                Log.e("ZOOM","ZOOM");
                 LatLng latilong = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latilong, 15));
                 locationManager.removeUpdates(this);
@@ -193,11 +190,8 @@ public class MyMapFragment extends MapFragment implements OnMapReadyCallback, Go
             return;
         }
 
-        Log.e("ZOOM","ZOOM!");
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 2, locationListener1);
-        Log.e("ZOOM","ZOOM!");
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, locationListener1);
-        Log.e("ZOOM","ZOOM!");
 
     }
 
